@@ -126,15 +126,18 @@
             <ul>
                 <h3>&nbspBasic information</h3>
                 <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
-                <li>Name: &nbsp<span style="font-weight: 500;">basic-contract-benchmark</span></li>
-                <li>Description: &nbsp<span style="font-weight: 500;"></span></li>
-                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">1</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">certificate-benchmark-test</span></li>
+                <li>Description: &nbsp<span style="font-weight: 500;">Test issuing, verifying, and revoking certificates.</span></li>
+                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">4</span></li>
                 <li><a href="#benchmarkInfo">Details</a></li>
             </ul>
             <ul>
                 <h3>&nbspBenchmark results</h3>
                 <li><a href="#benchmarksummary">Summary</a></li>
-                    <li><a href="#Create Asset">Create Asset</a></li>
+                    <li><a href="#Issue Certificates">Issue Certificates</a></li>
+                    <li><a href="#Verify a Certificate">Verify a Certificate</a></li>
+                    <li><a href="#Query All Certificates">Query All Certificates</a></li>
+                    <li><a href="#Revoke Certificate">Revoke Certificate</a></li>
             </ul>
             <ul>
                 <h3>&nbspSystem under test</h3>
@@ -152,47 +155,144 @@
                     </tr>
 
                     <tr>
-                         <td>Create Asset</td> <td>301</td> <td>0</td> <td>10.0</td> <td>2.03</td> <td>0.03</td> <td>0.50</td> <td>9.4</td>
+                         <td>Issue Certificates</td> <td>20</td> <td>0</td> <td>4.3</td> <td>2.04</td> <td>0.04</td> <td>1.36</td> <td>3.0</td>
+                    </tr>
+                    <tr>
+                         <td>Verify a Certificate</td> <td>20</td> <td>0</td> <td>40.1</td> <td>0.02</td> <td>0.00</td> <td>0.01</td> <td>39.8</td>
+                    </tr>
+                    <tr>
+                         <td>Query All Certificates</td> <td>4</td> <td>0</td> <td>9.9</td> <td>0.01</td> <td>0.01</td> <td>0.01</td> <td>9.7</td>
+                    </tr>
+                    <tr>
+                         <td>Revoke Certificate</td> <td>20</td> <td>0</td> <td>4.3</td> <td>2.04</td> <td>0.05</td> <td>1.36</td> <td>3.0</td>
                     </tr>
                 </table>
             </div>
-            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Create Asset">
-                <h2>Benchmark round: Create Asset</h2>
-                <p></p>
-                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
-rateControl:
-  type: fixed-rate
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Issue Certificates">
+                <h2>Benchmark round: Issue Certificates</h2>
+                <p>Issuing new certificates (using CreateAsset).</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">rateControl:
+  type: fixed-load
   opts:
-    tps: 10
+    transactionLoad: 2
 </pre>
-                        <h3>Performance metrics for Create Asset</h3>
+                        <h3>Performance metrics for Issue Certificates</h3>
                             <table style="min-width: 100%;">
                                 <tr>
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Create Asset</td> <td>301</td> <td>0</td> <td>10.0</td> <td>2.03</td> <td>0.03</td> <td>0.50</td> <td>9.4</td>
+                                     <td>Issue Certificates</td> <td>20</td> <td>0</td> <td>4.3</td> <td>2.04</td> <td>0.04</td> <td>1.36</td> <td>3.0</td>
                                 </tr>
                             </table>
-                        <h3>Resource utilization for Create Asset</h3>
+                        <h3>Resource utilization for Issue Certificates</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Verify a Certificate">
+                <h2>Benchmark round: Verify a Certificate</h2>
+                <p>Verifying certificates exist (using ReadAsset).</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 2
+</pre>
+                        <h3>Performance metrics for Verify a Certificate</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>Verify a Certificate</td> <td>20</td> <td>0</td> <td>40.1</td> <td>0.02</td> <td>0.00</td> <td>0.01</td> <td>39.8</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for Verify a Certificate</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Query All Certificates">
+                <h2>Benchmark round: Query All Certificates</h2>
+                <p>Browsing all certificates (using GetAllAssets).</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 1
+</pre>
+                        <h3>Performance metrics for Query All Certificates</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>Query All Certificates</td> <td>4</td> <td>0</td> <td>9.9</td> <td>0.01</td> <td>0.01</td> <td>0.01</td> <td>9.7</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for Query All Certificates</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Revoke Certificate">
+                <h2>Benchmark round: Revoke Certificate</h2>
+                <p>Revoking&#x2F;Deleting certificates (using DeleteAsset).</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 2
+</pre>
+                        <h3>Performance metrics for Revoke Certificate</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>Revoke Certificate</td> <td>20</td> <td>0</td> <td>4.3</td> <td>2.04</td> <td>0.05</td> <td>1.36</td> <td>3.0</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for Revoke Certificate</h3>
             </div>
 
             <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
                 <h2>Test Environment</h2>
                 <h3>benchmark config</h3>
-                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: basic-contract-benchmark
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: certificate-benchmark-test
+description: &#39;Test issuing, verifying, and revoking certificates.&#39;
 workers:
   type: local
-  number: 1
+  number: 2
 rounds:
-  - label: Create Asset
-    txDuration: 30
+  - label: Issue Certificates
+    description: Issuing new certificates (using CreateAsset).
+    txNumber: 20
     rateControl:
-      type: fixed-rate
+      type: fixed-load
       opts:
-        tps: 10
+        transactionLoad: 2
     workload:
-      module: workload&#x2F;createAsset.js
+      module: workload&#x2F;issueCertificate.js
+  - label: Verify a Certificate
+    description: Verifying certificates exist (using ReadAsset).
+    txNumber: 20
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 2
+    workload:
+      module: workload&#x2F;verifyCertificate.js
+  - label: Query All Certificates
+    description: Browsing all certificates (using GetAllAssets).
+    txNumber: 5
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 1
+    workload:
+      module: workload&#x2F;queryAllCertificates.js
+  - label: Revoke Certificate
+    description: Revoking&#x2F;Deleting certificates (using DeleteAsset).
+    txNumber: 20
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 2
+    workload:
+      module: workload&#x2F;revokeCertificate.js
 </pre>
                 <h3>SUT</h3>
                 <pre id="sutdetails">not provided</pre>

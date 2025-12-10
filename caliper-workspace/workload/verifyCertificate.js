@@ -5,20 +5,22 @@ const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 class VerifyCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
+        this.txIndex = 0;
     }
 
     async submitTransaction() {
-        // Query a fixed asset that should exist after InitLedger
-        const assetID = 'asset1';
-        
-        const args = {
+        this.txIndex++;
+        // نبحث عن نفس الشهادة التي أصدرناها في الخطوة السابقة
+        const certID = `cert_${this.workerIndex}_${this.txIndex}`;
+
+        const request = {
             contractId: 'basic',
             contractFunction: 'ReadAsset',
-            contractArguments: [assetID],
+            contractArguments: [certID],
             readOnly: true
         };
 
-        await this.sutAdapter.sendRequests(args);
+        await this.sutAdapter.sendRequests(request);
     }
 }
 

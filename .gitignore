@@ -32,3 +32,6 @@ install-fabric.sh
 
 # override the ignore of all config/ folders
 !full-stack-asset-transfer-guide/infrastructure/sample-network/config
+**/node_modules
+caliper-workspace/node_modules
+**/*.log

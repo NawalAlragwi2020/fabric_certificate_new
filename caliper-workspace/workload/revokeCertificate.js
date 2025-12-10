@@ -5,25 +5,22 @@ const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 class RevokeCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
-    }
-
-    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
-        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);
-        this.workerIndex = workerIndex;
+        this.txIndex = 0;
     }
 
     async submitTransaction() {
-        // Try to delete an asset that was created in the issue round
-        const assetID = `cert${this.workerIndex}_delete_${Date.now()}`;
-        
-        const args = {
+        this.txIndex++;
+        // نحذف نفس الشهادة التي تم إنشاؤها
+        const certID = `cert_${this.workerIndex}_${this.txIndex}`;
+
+        const request = {
             contractId: 'basic',
             contractFunction: 'DeleteAsset',
-            contractArguments: [assetID],
+            contractArguments: [certID],
             readOnly: false
         };
 
-        await this.sutAdapter.sendRequests(args);
+        await this.sutAdapter.sendRequests(request);
     }
 }
 

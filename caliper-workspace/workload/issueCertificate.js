@@ -5,30 +5,28 @@ const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 class IssueCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
-    }
-
-    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
-        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);
-        this.workerIndex = workerIndex;
+        this.txIndex = 0;
     }
 
     async submitTransaction() {
-        const assetID = `cert${this.workerIndex}_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
-        
-        const args = {
+        this.txIndex++;
+        // معرف موحد نستخدمه في جميع المراحل
+        const certID = `cert_${this.workerIndex}_${this.txIndex}`;
+
+        const request = {
             contractId: 'basic',
             contractFunction: 'CreateAsset',
             contractArguments: [
-                assetID,
-                'blue',
-                '5',
-                'Student',
-                '300'
+                certID,                     // ID
+                'Student ' + this.txIndex,  // Name
+                95,                         // Grade (INT required)
+                'Blockchain 101',           // Course
+                2025                        // Year (INT required)
             ],
             readOnly: false
         };
 
-        await this.sutAdapter.sendRequests(args);
+        await this.sutAdapter.sendRequests(request);
     }
 }
 

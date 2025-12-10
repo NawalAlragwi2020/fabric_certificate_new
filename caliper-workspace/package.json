@@ -1,24 +1,10 @@
 {
-  "name": "fabric-certificate-caliper-benchmark",
+  "name": "caliper-workspace",
   "version": "1.0.0",
-  "description": "Hyperledger Caliper benchmark for Fabric certificate management system",
-  "main": "index.js",
-  "scripts": {
-    "test": "npx caliper launch manager --caliper-workspace ./ --caliper-networkconfig networks/networkConfig.yaml --caliper-benchconfig benchmarks/benchConfig.yaml --caliper-flow-only-test --caliper-fabric-gateway-enabled"
-  },
-  "keywords": [
-    "hyperledger",
-    "fabric",
-    "caliper",
-    "benchmark",
-    "certificate"
-  ],
-  "author": "",
-  "license": "Apache-2.0",
+  "description": "Hyperledger Caliper Benchmark",
+  "private": true,
   "dependencies": {
-    "@hyperledger/caliper-cli": "0.4.2",
-    "@hyperledger/caliper-core": "0.4.2",
-    "fabric-ca-client": "^2.5.0",
-    "fabric-network": "^2.5.0"
+    "@hyperledger/caliper-cli": "0.5.0",
+    "fabric-network": "^2.2.12"
   }
 }
