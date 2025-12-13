@@ -17,7 +17,7 @@ peers:
   peer0.org1.example.com:
     url: grpcs://localhost:7051
     tlsCACerts:
-      path: '/workspaces/fabric_certificate_MT/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt'
+      path: '/workspaces/fabric_certificate_new/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt'
     grpcOptions:
       ssl-target-name-override: peer0.org1.example.com
 certificateAuthorities:
@@ -25,6 +25,6 @@ certificateAuthorities:
     url: https://localhost:7054
     caName: ca-org1
     tlsCACerts:
-      path: '/workspaces/fabric_certificate_MT/test-network/organizations/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem'
+      path: '/workspaces/fabric_certificate_new/test-network/organizations/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem'
     httpOptions:
       verify: false
