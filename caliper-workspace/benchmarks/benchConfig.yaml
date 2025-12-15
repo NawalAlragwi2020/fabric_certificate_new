@@ -7,40 +7,40 @@ test:
   rounds:
     - label: Issue Certificates
       description: Issuing new certificates (using CreateAsset).
-      txNumber: 20
+      txDuration: 30
       rateControl:
-        type: fixed-load
-        opts:
-          transactionLoad: 2
+       type: fixed-rate
+       opts:
+         tps: 50
       workload:
         module: workload/issueCertificate.js
 
     - label: Verify a Certificate
       description: Verifying certificates exist (using ReadAsset).
-      txNumber: 20
+      txDuration: 30
       rateControl:
-        type: fixed-load
-        opts:
-          transactionLoad: 2
+        type: fixed-rate
+      opts:
+        tps: 50
       workload:
         module: workload/verifyCertificate.js
 
     - label: Query All Certificates
       description: Browsing all certificates (using GetAllAssets).
-      txNumber: 5
+      txDuration: 30
       rateControl:
-        type: fixed-load
+        type: fixed-rate
         opts:
-          transactionLoad: 1
+          tps: 200
       workload:
         module: workload/queryAllCertificates.js
 
     - label: Revoke Certificate
       description: Revoking/Deleting certificates (using DeleteAsset).
-      txNumber: 20
+      txDuration: 30
       rateControl:
-        type: fixed-load
+        type: fixed-rate
         opts:
-          transactionLoad: 2
+          tps: 100
       workload:
         module: workload/revokeCertificate.js
