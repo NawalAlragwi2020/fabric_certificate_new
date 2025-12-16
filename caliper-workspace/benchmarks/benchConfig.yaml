@@ -14,7 +14,9 @@ test:
           transactionLoad: 2
       workload:
         module: workload/issueCertificate.js
-
+        arguments:
+          assets: 1000
+          contractId: basic
     - label: Verify a Certificate
       description: Verifying certificates exist (using ReadAsset).
       txNumber: 20
@@ -24,7 +26,9 @@ test:
           transactionLoad: 2
       workload:
         module: workload/verifyCertificate.js
-
+        arguments:
+          assets: 1000
+          contractId: basic
     - label: Query All Certificates
       description: Browsing all certificates (using GetAllAssets).
       txNumber: 5
@@ -34,7 +38,9 @@ test:
           transactionLoad: 1
       workload:
         module: workload/queryAllCertificates.js
-
+        arguments:
+          assets: 1000
+          contractId: basic
     - label: Revoke Certificate
       description: Revoking/Deleting certificates (using DeleteAsset).
       txNumber: 20
@@ -44,3 +50,6 @@ test:
           transactionLoad: 2
       workload:
         module: workload/revokeCertificate.js
+        arguments:
+          assets: 1000
+          contractId: basic
