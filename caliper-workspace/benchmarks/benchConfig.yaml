@@ -41,6 +41,6 @@ test:
       rateControl:
        type: fixed-rate
        opts:
-         tps: 100
+         tps: 50
       workload:
         module: workload/revokeCertificate.js
