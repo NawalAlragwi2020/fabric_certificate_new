@@ -72,7 +72,7 @@ caliper:
 channels:
   - channelName: mychannel
     contracts:
-      - id: basic
+      - id: diploma 
 
 organizations:
   - mspid: Org1MSP
