@@ -99,3 +99,6 @@ npx caliper launch manager \
 echo -e "${GREEN}==================================================${NC}"
 echo -e "${GREEN}🎉 Project Finished Successfully!${NC}"
 echo -e "${GREEN}📄 Report: caliper-workspace/report.html${NC}"
+# إلغاء محاكاة تأخير الشبكة بعد انتهاء الاختبار
+echo -e "${GREEN}🧹 Cleaning up network delay...${NC}"
+sudo tc qdisc del dev enp0s3 root || true
