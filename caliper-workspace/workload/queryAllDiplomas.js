@@ -2,15 +2,15 @@
 
 const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 
-class QueryAllWorkload extends WorkloadModuleBase {
+class QueryAllDiplomasWorkload extends WorkloadModuleBase {
     constructor() {
         super();
     }
 
     async submitTransaction() {
         const request = {
-            contractId: 'basic',
-            contractFunction: 'GetAllAssets',
+            contractId: 'diploma',
+            contractFunction: 'GetAllDiplomas', // الوظيفة المحدثة في الـ Chaincode
             contractArguments: [],
             readOnly: true
         };
@@ -20,7 +20,7 @@ class QueryAllWorkload extends WorkloadModuleBase {
 }
 
 function createWorkloadModule() {
-    return new QueryAllWorkload();
+    return new QueryAllDiplomasWorkload();
 }
 
 module.exports.createWorkloadModule = createWorkloadModule;

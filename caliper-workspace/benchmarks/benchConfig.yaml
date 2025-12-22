@@ -14,7 +14,7 @@ test:
         opts:
           tps: 50
       workload:
-        module: workload/issueCertificate.js
+        module: workload/issueDiplomaBatch.js
 
     # 2. اختبار الجهد (Stress Test) لاكتشاف أقصى قدرة للشبكة
     - label: Issue Certificates (Stress Test)
@@ -26,7 +26,7 @@ test:
           startingTps: 50
           finishingTps: 400
       workload:
-        module: workload/issueCertificate.js
+        module: workload/issueDiplomaBatch.js
 
     # 3. اختبار القراءة المكثف
     - label: Verify a Certificate (High Load)
@@ -37,7 +37,7 @@ test:
         opts:
           tps: 200
       workload:
-        module: workload/verifyCertificate.js
+        module: workload/verifyDiploma.js
 
     # 4. الاستعلام الشامل
     - label: Query All Certificates
@@ -48,7 +48,7 @@ test:
         opts:
           tps: 50
       workload:
-        module: workload/queryAllCertificates.js
+        module: workload/queryAllDiplomas.js
 
 # إضافات مراقبة موارد النظام (لحل مشكلة الجداول الفارغة في التقرير)
 monitors:

@@ -6,23 +6,29 @@ class IssueCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
         this.txIndex = 0;
+        this.batchSize = 10; // تجميع 10 شهادات في كل طلب لتقليل العبء
     }
 
     async submitTransaction() {
-        this.txIndex++;
-        // معرف موحد نستخدمه في جميع المراحل
-        const certID = `cert_${this.workerIndex}_${this.txIndex}`;
+        let diplomas = [];
+        
+        // بناء الدفعة (Batch)
+        for (let i = 0; i < this.batchSize; i++) {
+            this.txIndex++;
+            const certID = `cert_${this.workerIndex}_${this.txIndex}`;
+            diplomas.push({
+                DiplomaID: certID,
+                StudentName: 'Student ' + this.txIndex,
+                University: 'UPI University', // متوافق مع هيكل Diploma الجديد
+                Degree: 'Computer Science',
+                GraduationYear: 2025
+            });
+        }
 
         const request = {
-            contractId: 'basic',
-            contractFunction: 'CreateAsset',
-            contractArguments: [
-                certID,                     // ID
-                'Student ' + this.txIndex,  // Name
-                95,                         // Grade (INT required)
-                'Blockchain 101',           // Course
-                2025                        // Year (INT required)
-            ],
+            contractId: 'diploma', // يجب أن يطابق الاسم في السكربت وملف الشبكة
+            contractFunction: 'CreateDiplomaBatch', // استدعاء الوظيفة المطورة
+            contractArguments: [JSON.stringify(diplomas)], // إرسال المصفوفة كـ String واحد
             readOnly: false
         };
 
