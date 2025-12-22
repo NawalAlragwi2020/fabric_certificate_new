@@ -66,7 +66,7 @@ cd caliper-workspace
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing Caliper dependencies..."
     npm install
-    npx caliper bind --caliper-bind-sut fabric:2.2
+    npx caliper bind --caliper-bind-sut fabric:2.5
 fi
 
 # ب) البحث عن المفتاح الخاص (Private Key) أوتوماتيكياً
@@ -88,7 +88,7 @@ caliper:
 channels:
   - channelName: mychannel
     contracts:
-      - id: basic
+      - id: diploma
 
 organizations:
   - mspid: Org1MSP
