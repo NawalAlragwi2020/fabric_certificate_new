@@ -115,4 +115,3 @@ npx caliper launch manager \
 echo -e "${GREEN}==================================================${NC}"
 echo -e "${GREEN}🎉 Project Finished Successfully!${NC}"
 echo -e "${GREEN}📄 Report: caliper-workspace/report.html${NC}"
- فحص الكود بعد التعديلات
