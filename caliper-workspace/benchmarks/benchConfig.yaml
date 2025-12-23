@@ -46,7 +46,7 @@ test:
       rateControl:
         type: fixed-rate
         opts:
-          tps: 50
+          tps: 10
       workload:
         module: workload/queryAllDiplomas.js
 
