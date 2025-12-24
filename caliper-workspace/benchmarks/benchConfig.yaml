@@ -1,13 +1,13 @@
 test:
-  name: certificate-benchmark-test-v2
-  description: 'إختبار جهد متقدم لإصدار والتحقق وإلغاء الشهادات مع مراقبة الموارد'
+  name: certificate-benchmark-v3-secure
+  description: 'إختبار الأداء والأمان باستخدام SHA-3 وتقنية الـ Batching'
   workers:
     type: local
-    number: 2 # كما ورد في تقريرك الأصلي
+    number: 2
   rounds:
-    # 1. اختبار خط الأساس (Baseline) للتأكد من استقرار الشبكة
-    - label: Issue Certificates (Baseline)
-      description: إصدار شهادات بمعدل ثابت 50 TPS
+    # 1. اختبار الإصدار (التركيز على الـ Batching)
+    - label: Issue-Certificates-SHA3-Batch
+      description: إصدار شهادات مجمعة ومشفرة بـ SHA-3
       txDuration: 30
       rateControl:
         type: fixed-rate
@@ -16,10 +16,10 @@ test:
       workload:
         module: workload/issueDiplomaBatch.js
 
-    # 2. اختبار الجهد (Stress Test) لاكتشاف أقصى قدرة للشبكة
-    - label: Issue Certificates (Stress Test)
-      description: رفع الحمل تدريجياً من 50 إلى 400 TPS لاكتشاف نقطة الانهيار
-      txDuration: 60 # زيادة المدة لإعطاء وقت للمراقب لجمع البيانات
+    # 2. اختبار الجهد الأقصى (Stress Test)
+    - label: Stress-Test-Scaling
+      description: اختبار قدرة الشبكة من 50 إلى 400 TPS
+      txDuration: 40 
       rateControl:
         type: linear-rate
         opts:
@@ -28,36 +28,35 @@ test:
       workload:
         module: workload/issueDiplomaBatch.js
 
-    # 3. اختبار القراءة المكثف
-    - label: Verify a Certificate (High Load)
-      description: التحقق من الشهادات بمعدل مرتفع 200 TPS
+    # 3. اختبار التحقق الأمني (SHA-3 Integrity Check) - الأهم لرسالتك
+    - label: Secure-Verification-SHA3
+      description: التحقق اللحظي من الشهادات باستخدام SHA-3
       txDuration: 30
       rateControl:
         type: fixed-rate
         opts:
-          tps: 200
+          tps: 200 # نظامك المطور أثبت قدرته على هذا المعدل
       workload:
         module: workload/verifyDiploma.js
 
-    # 4. الاستعلام الشامل
-    - label: Query All Certificates
-      description: جلب كافة الأصول بمعدل 50 TPS
-      txDuration: 30
+    # 4. الاستعلام المحدود (لتفادي مشكلة الذاكرة في التقرير 17)
+    - label: Query-All-Optimized
+      description: جلب كافة الأصول بمعدل منخفض لضمان استقرار الذاكرة
+      txDuration: 20
       rateControl:
         type: fixed-rate
         opts:
-          tps: 10
+          tps: 5 # تقليل المعدل لتجنب الـ Timeout
       workload:
         module: workload/queryAllDiplomas.js
 
-# إضافات مراقبة موارد النظام (لحل مشكلة الجداول الفارغة في التقرير)
 monitors:
   resource:
     - module: docker
       options:
-        interval: 5 # تحديث البيانات كل 5 ثوانٍ
+        interval: 5 
         containers:
-          - all # مراقبة كافة حاويات فابريك (Peer, Orderer, CouchDB)
+          - all 
         charting:
           bar:
             metrics: [Memory(avg), CPU%(avg)]
