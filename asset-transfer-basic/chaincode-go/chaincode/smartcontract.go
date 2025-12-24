@@ -3,7 +3,8 @@ package chaincode
 import (
 	"encoding/json"
 	"fmt"
-
+	"encoding/hex"             // للتعامل مع مخرجات التشفير
+	"golang.org/x/crypto/sha3" // خوارزمية التجزئة المحسنة SHA-3
 	"github.com/hyperledger/fabric-contract-api-go/v2/contractapi"
 )
 
@@ -12,14 +13,27 @@ type SmartContract struct {
 	contractapi.Contract
 }
 
-// Diploma represents the educational certificate data structure [cite: 192]
-// This structure is designed to prevent forgery and ensure data integrity [cite: 35, 52]
+// Diploma represents the educational certificate data structure
+// Added CertificateHash to enhance protection and verify integrity
 type Diploma struct {
-	DiplomaID      string `json:"DiplomaID"`      // المعرف الفريد للشهادة [cite: 192, 251]
-	StudentName    string `json:"StudentName"`    // اسم الطالب [cite: 192, 251]
-	University     string `json:"University"`     // الجامعة [cite: 192, 251]
-	Degree         string `json:"Degree"`         // الدرجة العلمية [cite: 192, 251]
-	GraduationYear int    `json:"GraduationYear"` // سنة التخرج [cite: 192, 251]
+	DiplomaID       string `json:"DiplomaID"`
+	StudentName     string `json:"StudentName"`
+	University      string `json:"University"`
+	Degree          string `json:"Degree"`
+	GraduationYear  int    `json:"GraduationYear"`
+	CertificateHash string `json:"CertificateHash"` // البصمة الرقمية المحسنة
+}
+
+// generateSHA3Hash توليد بصمة رقمية فريدة باستخدام SHA-3 لتعزيز الأمان
+func (s *SmartContract) generateSHA3Hash(diploma Diploma) string {
+	// دمج البيانات الأساسية لتكوين السلسلة المطلوب تشفيرها
+	input := fmt.Sprintf("%s%s%s%d", diploma.DiplomaID, diploma.StudentName, diploma.University, diploma.GraduationYear)
+	
+	// استخدام Keccak-256 (SHA-3) لتوليد الهاش
+	hash := sha3.New256()
+	hash.Write([]byte(input))
+	
+	return hex.EncodeToString(hash.Sum(nil))
 }
 
 // InitLedger adds a base set of diplomas to the ledger for testing purposes
@@ -30,6 +44,9 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 	}
 
 	for _, diploma := range diplomas {
+		// إضافة الهاش للبيانات الأولية
+		diploma.CertificateHash = s.generateSHA3Hash(diploma)
+		
 		diplomaJSON, err := json.Marshal(diploma)
 		if err != nil {
 			return err
@@ -43,7 +60,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 	return nil
 }
 
-// CreateDiploma issues a single new diploma to the world state [cite: 251]
+// CreateDiploma issues a single new diploma with SHA-3 protection
 func (s *SmartContract) CreateDiploma(ctx contractapi.TransactionContextInterface, id string, name string, university string, degree string, year int) error {
 	exists, err := s.DiplomaExists(ctx, id)
 	if err != nil {
@@ -60,6 +77,10 @@ func (s *SmartContract) CreateDiploma(ctx contractapi.TransactionContextInterfac
 		Degree:         degree,
 		GraduationYear: year,
 	}
+	
+	// توليد وتخزين الهاش المحسن
+	diploma.CertificateHash = s.generateSHA3Hash(diploma)
+
 	diplomaJSON, err := json.Marshal(diploma)
 	if err != nil {
 		return err
@@ -68,18 +89,19 @@ func (s *SmartContract) CreateDiploma(ctx contractapi.TransactionContextInterfac
 	return ctx.GetStub().PutState(id, diplomaJSON)
 }
 
-// CreateDiplomaBatch issues multiple diplomas in a single transaction
-// This optimized function significantly reduces latency and overhead under high load [cite: 21, 415, 659]
+// CreateDiplomaBatch issues multiple diplomas in a single transaction with SHA-3 for each
+// Optimized for high performance (Batching) and high security (SHA-3)
 func (s *SmartContract) CreateDiplomaBatch(ctx contractapi.TransactionContextInterface, diplomasJson string) error {
 	var diplomas []Diploma
-	// Unmarshal the batch of diplomas sent from Caliper [cite: 415]
 	err := json.Unmarshal([]byte(diplomasJson), &diplomas)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal diplomas batch: %v", err)
 	}
 
 	for _, diploma := range diplomas {
-		// Store each diploma in the world state
+		// توليد الهاش لكل شهادة داخل الدفعة لضمان سلامة البيانات
+		diploma.CertificateHash = s.generateSHA3Hash(diploma)
+
 		diplomaJSON, err := json.Marshal(diploma)
 		if err != nil {
 			return err
@@ -109,6 +131,19 @@ func (s *SmartContract) ReadDiploma(ctx contractapi.TransactionContextInterface,
 	}
 
 	return &diploma, nil
+}
+
+// VerifyDiploma checks if the diploma data matches its stored SHA-3 hash
+// New function for security verification
+func (s *SmartContract) VerifyDiploma(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
+	diploma, err := s.ReadDiploma(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	// إعادة حساب الهاش للبيانات الحالية ومقارنته بالمخزن
+	calculatedHash := s.generateSHA3Hash(*diploma)
+	return calculatedHash == diploma.CertificateHash, nil
 }
 
 // DiplomaExists returns true when diploma with given ID exists in world state
