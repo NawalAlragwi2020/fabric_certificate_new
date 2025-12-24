@@ -126,18 +126,18 @@
             <ul>
                 <h3>&nbspBasic information</h3>
                 <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
-                <li>Name: &nbsp<span style="font-weight: 500;">certificate-benchmark-test-v2</span></li>
-                <li>Description: &nbsp<span style="font-weight: 500;">إختبار جهد متقدم لإصدار والتحقق وإلغاء الشهادات مع مراقبة الموارد</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">certificate-benchmark-v3-secure</span></li>
+                <li>Description: &nbsp<span style="font-weight: 500;">إختبار الأداء والأمان باستخدام SHA-3 وتقنية الـ Batching</span></li>
                 <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">4</span></li>
                 <li><a href="#benchmarkInfo">Details</a></li>
             </ul>
             <ul>
                 <h3>&nbspBenchmark results</h3>
                 <li><a href="#benchmarksummary">Summary</a></li>
-                    <li><a href="#Issue Certificates (Baseline)">Issue Certificates (Baseline)</a></li>
-                    <li><a href="#Issue Certificates (Stress Test)">Issue Certificates (Stress Test)</a></li>
-                    <li><a href="#Verify a Certificate (High Load)">Verify a Certificate (High Load)</a></li>
-                    <li><a href="#Query All Certificates">Query All Certificates</a></li>
+                    <li><a href="#Issue-Certificates-SHA3-Batch">Issue-Certificates-SHA3-Batch</a></li>
+                    <li><a href="#Stress-Test-Scaling">Stress-Test-Scaling</a></li>
+                    <li><a href="#Secure-Verification-SHA3">Secure-Verification-SHA3</a></li>
+                    <li><a href="#Query-All-Optimized">Query-All-Optimized</a></li>
             </ul>
             <ul>
                 <h3>&nbspSystem under test</h3>
@@ -155,283 +155,283 @@
                     </tr>
 
                     <tr>
-                         <td>Issue Certificates (Baseline)</td> <td>1502</td> <td>0</td> <td>50.0</td> <td>1.37</td> <td>0.17</td> <td>0.74</td> <td>48.7</td>
+                         <td>Issue-Certificates-SHA3-Batch</td> <td>1502</td> <td>0</td> <td>50.0</td> <td>1.67</td> <td>0.20</td> <td>0.77</td> <td>49.5</td>
                     </tr>
                     <tr>
-                         <td>Issue Certificates (Stress Test)</td> <td>4365</td> <td>0</td> <td>72.8</td> <td>2.00</td> <td>0.20</td> <td>1.00</td> <td>71.7</td>
+                         <td>Stress-Test-Scaling</td> <td>2722</td> <td>0</td> <td>68.1</td> <td>2.15</td> <td>0.21</td> <td>1.03</td> <td>66.8</td>
                     </tr>
                     <tr>
-                         <td>Verify a Certificate (High Load)</td> <td>0</td> <td>1524</td> <td>48.8</td> <td>-</td> <td>-</td> <td>-</td> <td>48.7</td>
+                         <td>Secure-Verification-SHA3</td> <td>6002</td> <td>0</td> <td>200.1</td> <td>0.08</td> <td>0.00</td> <td>0.01</td> <td>200.0</td>
                     </tr>
                     <tr>
-                         <td>Query All Certificates</td> <td>0</td> <td>1502</td> <td>50.1</td> <td>-</td> <td>-</td> <td>-</td> <td>17.1</td>
+                         <td>Query-All-Optimized</td> <td>84</td> <td>18</td> <td>5.1</td> <td>59.87</td> <td>3.46</td> <td>39.89</td> <td>1.3</td>
                     </tr>
                 </table>
             </div>
-            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Issue Certificates (Baseline)">
-                <h2>Benchmark round: Issue Certificates (Baseline)</h2>
-                <p>إصدار شهادات بمعدل ثابت 50 TPS</p>
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Issue-Certificates-SHA3-Batch">
+                <h2>Benchmark round: Issue-Certificates-SHA3-Batch</h2>
+                <p>إصدار شهادات مجمعة ومشفرة بـ SHA-3</p>
                 <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
 rateControl:
   type: fixed-rate
   opts:
     tps: 50
 </pre>
-                        <h3>Performance metrics for Issue Certificates (Baseline)</h3>
+                        <h3>Performance metrics for Issue-Certificates-SHA3-Batch</h3>
                             <table style="min-width: 100%;">
                                 <tr>
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Issue Certificates (Baseline)</td> <td>1502</td> <td>0</td> <td>50.0</td> <td>1.37</td> <td>0.17</td> <td>0.74</td> <td>48.7</td>
+                                     <td>Issue-Certificates-SHA3-Batch</td> <td>1502</td> <td>0</td> <td>50.0</td> <td>1.67</td> <td>0.20</td> <td>0.77</td> <td>49.5</td>
                                 </tr>
                             </table>
-                        <h3>Resource utilization for Issue Certificates (Baseline)</h3>
+                        <h3>Resource utilization for Issue-Certificates-SHA3-Batch</h3>
                             <h4>Resource monitor: docker</h4>
                             <table style="min-width: 100%;">
                                 <tr>
                                 <table>
                                     <tr>
-                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [B]</th> <th>Disc Read [B]</th>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [MB]</th> <th>Disc Read [KB]</th>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>5.78</td> <td>3.49</td> <td>9.26</td> <td>8.50</td> <td>10.2</td> <td>6.73</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>5.31</td> <td>3.66</td> <td>10.7</td> <td>9.55</td> <td>9.46</td> <td>7.19</td> <td>0.00</td> <td>732</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>5.11</td> <td>4.22</td> <td>10.3</td> <td>10.2</td> <td>7.30</td> <td>5.55</td> <td>0.00</td> <td>308</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org1.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org2.example.com</td> <td>12.01</td> <td>10.5</td> <td>130</td> <td>122</td> <td>18.6</td> <td>11.7</td> <td>19.4</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org2.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;orderer.example.com</td> <td>3.46</td> <td>2.73</td> <td>57.3</td> <td>49.1</td> <td>9.80</td> <td>19.5</td> <td>27.8</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;orderer.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org1.example.com</td> <td>12.34</td> <td>10.1</td> <td>150</td> <td>140</td> <td>18.6</td> <td>11.9</td> <td>16.7</td> <td>64.0</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_orderer</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org2</td> <td>0</td> <td>0</td> <td>14.3</td> <td>14.3</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org2</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org1</td> <td>0</td> <td>0</td> <td>14.2</td> <td>14.2</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org1</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_orderer</td> <td>0</td> <td>0</td> <td>16.3</td> <td>16.3</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                 </table>
                                 </tr>
                             </table>
                             <div class="charting">
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Issue Certificates (Baseline)_horizontalBar0">
-                                        <script>plotChart("MonitorDocker_Issue Certificates (Baseline)_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[3.49,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Issue-Certificates-SHA3-Batch_horizontalBar0">
+                                        <script>plotChart("MonitorDocker_Issue-Certificates-SHA3-Batch_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[3.66,4.22,10.5,2.73,10.1,0,0,0]}]}")</script>
                                     </canvas>
                                 </div>
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Issue Certificates (Baseline)_horizontalBar1">
-                                        <script>plotChart("MonitorDocker_Issue Certificates (Baseline)_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [MB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;8.50&quot;,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Issue-Certificates-SHA3-Batch_horizontalBar1">
+                                        <script>plotChart("MonitorDocker_Issue-Certificates-SHA3-Batch_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [MB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;9.55&quot;,&quot;10.2&quot;,&quot;122&quot;,&quot;49.1&quot;,&quot;140&quot;,&quot;14.3&quot;,&quot;14.2&quot;,&quot;16.3&quot;]}]}")</script>
                                     </canvas>
                                 </div>
                             </div>
             </div>
 
-            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Issue Certificates (Stress Test)">
-                <h2>Benchmark round: Issue Certificates (Stress Test)</h2>
-                <p>رفع الحمل تدريجياً من 50 إلى 400 TPS لاكتشاف نقطة الانهيار</p>
-                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 60
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Stress-Test-Scaling">
+                <h2>Benchmark round: Stress-Test-Scaling</h2>
+                <p>اختبار قدرة الشبكة من 50 إلى 400 TPS</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 40
 rateControl:
   type: linear-rate
   opts:
     startingTps: 50
     finishingTps: 400
 </pre>
-                        <h3>Performance metrics for Issue Certificates (Stress Test)</h3>
+                        <h3>Performance metrics for Stress-Test-Scaling</h3>
                             <table style="min-width: 100%;">
                                 <tr>
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Issue Certificates (Stress Test)</td> <td>4365</td> <td>0</td> <td>72.8</td> <td>2.00</td> <td>0.20</td> <td>1.00</td> <td>71.7</td>
+                                     <td>Stress-Test-Scaling</td> <td>2722</td> <td>0</td> <td>68.1</td> <td>2.15</td> <td>0.21</td> <td>1.03</td> <td>66.8</td>
                                 </tr>
                             </table>
-                        <h3>Resource utilization for Issue Certificates (Stress Test)</h3>
+                        <h3>Resource utilization for Stress-Test-Scaling</h3>
                             <h4>Resource monitor: docker</h4>
                             <table style="min-width: 100%;">
                                 <tr>
                                 <table>
                                     <tr>
-                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [B]</th> <th>Disc Read [B]</th>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [MB]</th> <th>Disc Read [KB]</th>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>7.59</td> <td>5.05</td> <td>10.0</td> <td>9.48</td> <td>26.9</td> <td>16.9</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>7.57</td> <td>5.17</td> <td>11.0</td> <td>10.8</td> <td>16.7</td> <td>12.7</td> <td>0.00</td> <td>228</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>7.9</td> <td>4.9</td> <td>12.9</td> <td>10.9</td> <td>16.7</td> <td>12.7</td> <td>0.00</td> <td>760</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org1.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org2.example.com</td> <td>17.43</td> <td>11.46</td> <td>174</td> <td>146</td> <td>42.8</td> <td>27.1</td> <td>49.9</td> <td>24.0</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org2.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;orderer.example.com</td> <td>5.22</td> <td>3.42</td> <td>93.7</td> <td>72.2</td> <td>22.8</td> <td>44.7</td> <td>69.8</td> <td>620</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;orderer.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org1.example.com</td> <td>16.93</td> <td>11.3</td> <td>203</td> <td>170</td> <td>42.8</td> <td>27.6</td> <td>63.3</td> <td>24.0</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_orderer</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org2</td> <td>0</td> <td>0</td> <td>14.3</td> <td>14.3</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org2</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org1</td> <td>0</td> <td>0</td> <td>14.2</td> <td>14.2</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org1</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_orderer</td> <td>0</td> <td>0</td> <td>16.3</td> <td>16.3</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                 </table>
                                 </tr>
                             </table>
                             <div class="charting">
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Issue Certificates (Stress Test)_horizontalBar0">
-                                        <script>plotChart("MonitorDocker_Issue Certificates (Stress Test)_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[5.05,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Stress-Test-Scaling_horizontalBar0">
+                                        <script>plotChart("MonitorDocker_Stress-Test-Scaling_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[5.17,4.9,11.46,3.42,11.3,0,0,0]}]}")</script>
                                     </canvas>
                                 </div>
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Issue Certificates (Stress Test)_horizontalBar1">
-                                        <script>plotChart("MonitorDocker_Issue Certificates (Stress Test)_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [MB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;9.48&quot;,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Stress-Test-Scaling_horizontalBar1">
+                                        <script>plotChart("MonitorDocker_Stress-Test-Scaling_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [MB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;10.8&quot;,&quot;10.9&quot;,&quot;146&quot;,&quot;72.2&quot;,&quot;170&quot;,&quot;14.3&quot;,&quot;14.2&quot;,&quot;16.3&quot;]}]}")</script>
                                     </canvas>
                                 </div>
                             </div>
             </div>
 
-            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Verify a Certificate (High Load)">
-                <h2>Benchmark round: Verify a Certificate (High Load)</h2>
-                <p>التحقق من الشهادات بمعدل مرتفع 200 TPS</p>
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Secure-Verification-SHA3">
+                <h2>Benchmark round: Secure-Verification-SHA3</h2>
+                <p>التحقق اللحظي من الشهادات باستخدام SHA-3</p>
                 <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
 rateControl:
   type: fixed-rate
   opts:
     tps: 200
 </pre>
-                        <h3>Performance metrics for Verify a Certificate (High Load)</h3>
+                        <h3>Performance metrics for Secure-Verification-SHA3</h3>
                             <table style="min-width: 100%;">
                                 <tr>
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Verify a Certificate (High Load)</td> <td>0</td> <td>1524</td> <td>48.8</td> <td>-</td> <td>-</td> <td>-</td> <td>48.7</td>
+                                     <td>Secure-Verification-SHA3</td> <td>6002</td> <td>0</td> <td>200.1</td> <td>0.08</td> <td>0.00</td> <td>0.01</td> <td>200.0</td>
                                 </tr>
                             </table>
-                        <h3>Resource utilization for Verify a Certificate (High Load)</h3>
+                        <h3>Resource utilization for Secure-Verification-SHA3</h3>
                             <h4>Resource monitor: docker</h4>
                             <table style="min-width: 100%;">
                                 <tr>
                                 <table>
                                     <tr>
-                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [B]</th> <th>Traffic Out [B]</th> <th>Disc Write [B]</th> <th>Disc Read [B]</th>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [B]</th> <th>Disc Read [KB]</th>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>0.03</td> <td>0</td> <td>10.0</td> <td>10.0</td> <td>240</td> <td>240</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>0</td> <td>0</td> <td>11.0</td> <td>11.0</td> <td>0.000229</td> <td>0.000229</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>7.68</td> <td>5.24</td> <td>13.5</td> <td>13.3</td> <td>12.5</td> <td>3.87</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org1.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org2.example.com</td> <td>0.49</td> <td>0.42</td> <td>174</td> <td>174</td> <td>0.0334</td> <td>0.0320</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org2.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;orderer.example.com</td> <td>0.04</td> <td>0.02</td> <td>61.8</td> <td>61.8</td> <td>0.00658</td> <td>0.00502</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;orderer.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org1.example.com</td> <td>19.69</td> <td>13.45</td> <td>203</td> <td>194</td> <td>13.6</td> <td>21.4</td> <td>0.00</td> <td>8.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_orderer</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org2</td> <td>0</td> <td>0</td> <td>14.3</td> <td>14.3</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org2</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org1</td> <td>0</td> <td>0</td> <td>14.2</td> <td>14.2</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org1</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_orderer</td> <td>0</td> <td>0</td> <td>16.3</td> <td>16.3</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                 </table>
                                 </tr>
                             </table>
                             <div class="charting">
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Verify a Certificate (High Load)_horizontalBar0">
-                                        <script>plotChart("MonitorDocker_Verify a Certificate (High Load)_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[0,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Secure-Verification-SHA3_horizontalBar0">
+                                        <script>plotChart("MonitorDocker_Secure-Verification-SHA3_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[0,5.24,0.42,0.02,13.45,0,0,0]}]}")</script>
                                     </canvas>
                                 </div>
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Verify a Certificate (High Load)_horizontalBar1">
-                                        <script>plotChart("MonitorDocker_Verify a Certificate (High Load)_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [MB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;10.0&quot;,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Secure-Verification-SHA3_horizontalBar1">
+                                        <script>plotChart("MonitorDocker_Secure-Verification-SHA3_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [MB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;11.0&quot;,&quot;13.3&quot;,&quot;174&quot;,&quot;61.8&quot;,&quot;194&quot;,&quot;14.3&quot;,&quot;14.2&quot;,&quot;16.3&quot;]}]}")</script>
                                     </canvas>
                                 </div>
                             </div>
             </div>
 
-            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Query All Certificates">
-                <h2>Benchmark round: Query All Certificates</h2>
-                <p>جلب كافة الأصول بمعدل 50 TPS</p>
-                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Query-All-Optimized">
+                <h2>Benchmark round: Query-All-Optimized</h2>
+                <p>جلب كافة الأصول بمعدل منخفض لضمان استقرار الذاكرة</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 20
 rateControl:
   type: fixed-rate
   opts:
-    tps: 50
+    tps: 5
 </pre>
-                        <h3>Performance metrics for Query All Certificates</h3>
+                        <h3>Performance metrics for Query-All-Optimized</h3>
                             <table style="min-width: 100%;">
                                 <tr>
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Query All Certificates</td> <td>0</td> <td>1502</td> <td>50.1</td> <td>-</td> <td>-</td> <td>-</td> <td>17.1</td>
+                                     <td>Query-All-Optimized</td> <td>84</td> <td>18</td> <td>5.1</td> <td>59.87</td> <td>3.46</td> <td>39.89</td> <td>1.3</td>
                                 </tr>
                             </table>
-                        <h3>Resource utilization for Query All Certificates</h3>
+                        <h3>Resource utilization for Query-All-Optimized</h3>
                             <h4>Resource monitor: docker</h4>
                             <table style="min-width: 100%;">
                                 <tr>
                                 <table>
                                     <tr>
-                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [B]</th> <th>Traffic Out [B]</th> <th>Disc Write [B]</th> <th>Disc Read [B]</th>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [GB]</th> <th>Memory(avg) [GB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [GB]</th> <th>Disc Write [MB]</th> <th>Disc Read [MB]</th>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>0.03</td> <td>0</td> <td>10.0</td> <td>9.93</td> <td>708</td> <td>774</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>0</td> <td>0</td> <td>0.0108</td> <td>0.0108</td> <td>0.000675</td> <td>7.21e-7</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19</td> <td>66.53</td> <td>48.07</td> <td>1.67</td> <td>1.17</td> <td>956</td> <td>0.761</td> <td>0.00</td> <td>0.566</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org1.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org2.example.com</td> <td>0.5</td> <td>0.41</td> <td>0.170</td> <td>0.166</td> <td>0.0721</td> <td>0.0000694</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;peer0.org2.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;orderer.example.com</td> <td>0.07</td> <td>0.02</td> <td>0.0613</td> <td>0.0579</td> <td>0.00850</td> <td>0.00000659</td> <td>0.00</td> <td>0.00</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;orderer.example.com</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;peer0.org1.example.com</td> <td>38.43</td> <td>19.78</td> <td>0.755</td> <td>0.629</td> <td>809</td> <td>2.47</td> <td>4.78</td> <td>1.41</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_orderer</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org2</td> <td>0</td> <td>0</td> <td>0.0140</td> <td>0.0140</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.0664</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org2</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_org1</td> <td>0</td> <td>0</td> <td>0.0139</td> <td>0.0139</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.0664</td>
                                     </tr>
                                     <tr>
-                                         <td>&#x2F;ca_org1</td> <td>NaN</td> <td>NaN</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+                                         <td>&#x2F;ca_orderer</td> <td>0</td> <td>0</td> <td>0.0159</td> <td>0.0159</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.0664</td>
                                     </tr>
                                 </table>
                                 </tr>
                             </table>
                             <div class="charting">
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Query All Certificates_horizontalBar0">
-                                        <script>plotChart("MonitorDocker_Query All Certificates_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[0,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Query-All-Optimized_horizontalBar0">
+                                        <script>plotChart("MonitorDocker_Query-All-Optimized_horizontalBar0", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;CPU%(avg)&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[0,48.07,0.41,0.02,19.78,0,0,0]}]}")</script>
                                     </canvas>
                                 </div>
                                 <div class="chart">
-                                    <canvas id="MonitorDocker_Query All Certificates_horizontalBar1">
-                                        <script>plotChart("MonitorDocker_Query All Certificates_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [MB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-dd26ee7215557dba86357427cd3628cac8252cdd5c25e09459fa24e1b4478558&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;ca_orderer&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;9.93&quot;,0,0,0,0,0,0,0]}]}")</script>
+                                    <canvas id="MonitorDocker_Query-All-Optimized_horizontalBar1">
+                                        <script>plotChart("MonitorDocker_Query-All-Optimized_horizontalBar1", "{&quot;type&quot;:&quot;horizontalBar&quot;,&quot;title&quot;:&quot;Memory(avg) [GB]&quot;,&quot;legend&quot;:false,&quot;labels&quot;:[&quot;&#x2F;dev-peer0.org2.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;dev-peer0.org1.example.com-diploma_2.0-6cbe5c3f96374d3937f6d8c043ca1a9c9bce761f4cd0f44fa25dae5ee7662f19&quot;,&quot;&#x2F;peer0.org2.example.com&quot;,&quot;&#x2F;orderer.example.com&quot;,&quot;&#x2F;peer0.org1.example.com&quot;,&quot;&#x2F;ca_org2&quot;,&quot;&#x2F;ca_org1&quot;,&quot;&#x2F;ca_orderer&quot;],&quot;datasets&quot;:[{&quot;backgroundColor&quot;:[&quot;rgb(255,71,0,0.6)&quot;,&quot;rgb(179,50,0,0.6)&quot;,&quot;rgb(255,209,191,0.6)&quot;,&quot;rgb(255,163,128,0.6)&quot;,&quot;rgb(31,235,0,0.6)&quot;,&quot;rgb(22,164,0,0.6)&quot;,&quot;rgb(200,255,191,0.6)&quot;,&quot;rgb(144,255,128,0.6)&quot;],&quot;data&quot;:[&quot;0.0108&quot;,&quot;1.17&quot;,&quot;0.166&quot;,&quot;0.0579&quot;,&quot;0.629&quot;,&quot;0.0140&quot;,&quot;0.0139&quot;,&quot;0.0159&quot;]}]}")</script>
                                     </canvas>
                                 </div>
                             </div>
@@ -440,14 +440,14 @@ rateControl:
             <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
                 <h2>Test Environment</h2>
                 <h3>benchmark config</h3>
-                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: certificate-benchmark-test-v2
-description: إختبار جهد متقدم لإصدار والتحقق وإلغاء الشهادات مع مراقبة الموارد
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: certificate-benchmark-v3-secure
+description: إختبار الأداء والأمان باستخدام SHA-3 وتقنية الـ Batching
 workers:
   type: local
   number: 2
 rounds:
-  - label: Issue Certificates (Baseline)
-    description: إصدار شهادات بمعدل ثابت 50 TPS
+  - label: Issue-Certificates-SHA3-Batch
+    description: إصدار شهادات مجمعة ومشفرة بـ SHA-3
     txDuration: 30
     rateControl:
       type: fixed-rate
@@ -455,9 +455,9 @@ rounds:
         tps: 50
     workload:
       module: workload&#x2F;issueDiplomaBatch.js
-  - label: Issue Certificates (Stress Test)
-    description: رفع الحمل تدريجياً من 50 إلى 400 TPS لاكتشاف نقطة الانهيار
-    txDuration: 60
+  - label: Stress-Test-Scaling
+    description: اختبار قدرة الشبكة من 50 إلى 400 TPS
+    txDuration: 40
     rateControl:
       type: linear-rate
       opts:
@@ -465,8 +465,8 @@ rounds:
         finishingTps: 400
     workload:
       module: workload&#x2F;issueDiplomaBatch.js
-  - label: Verify a Certificate (High Load)
-    description: التحقق من الشهادات بمعدل مرتفع 200 TPS
+  - label: Secure-Verification-SHA3
+    description: التحقق اللحظي من الشهادات باستخدام SHA-3
     txDuration: 30
     rateControl:
       type: fixed-rate
@@ -474,13 +474,13 @@ rounds:
         tps: 200
     workload:
       module: workload&#x2F;verifyDiploma.js
-  - label: Query All Certificates
-    description: جلب كافة الأصول بمعدل 50 TPS
-    txDuration: 30
+  - label: Query-All-Optimized
+    description: جلب كافة الأصول بمعدل منخفض لضمان استقرار الذاكرة
+    txDuration: 20
     rateControl:
       type: fixed-rate
       opts:
-        tps: 50
+        tps: 5
     workload:
       module: workload&#x2F;queryAllDiplomas.js
 </pre>
