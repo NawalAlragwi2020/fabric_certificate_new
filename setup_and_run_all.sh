@@ -3,28 +3,37 @@ set -e
 
 # 1. تنظيف أي إعدادات سابقة للشبكة
 sudo tc qdisc del dev eth0 root || true
-echo "🚀 جاري بدء عملية الإصلاح والتجهيز..."
+echo "🚀 جاري بدء عملية الإصلاح والتجهيز الأمنية..."
 
-# 1. تحميل أدوات Hyperledger Fabric
+# 2. تحميل أدوات Hyperledger Fabric
 if [ ! -d "bin" ]; then
     echo "⬇ جاري تحميل الأدوات (Binaries)..."
     curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.5.9 1.5.7
 else
     echo "✅ الأدوات موجودة مسبقاً."
 fi
-echo "🚀 Starting Full Project Setup (Fabric + Caliper)..."
 
-# 2. إعداد المسارات الأساسية
+# 3. إعداد المسارات الأساسية
 export PATH=${PWD}/bin:$PATH
 export FABRIC_CFG_PATH=${PWD}/config/
 
-# 3. إعادة تشغيل الشبكة من الصفر (لضمان عمل الـ Sequence 1)
+# 4. إعادة تشغيل الشبكة من الصفر
 cd test-network
 ./network.sh down
 ./network.sh up createChannel -c mychannel -ca
 cd ..
 
-# 4. نشر العقد المطور (مع دعم Batching)
+# ============================================================
+# خطوة التحديث الأمني (SHA-3) - تُضاف هنا قبل النشر
+# ============================================================
+echo "🛡️ جاري تجهيز المكتبات الأمنية (SHA-3/Keccak)..."
+cd asset-transfer-basic/chaincode-go
+go get golang.org/x/crypto/sha3
+go mod tidy
+cd ../..
+# ============================================================
+
+# 5. نشر العقد المطور (مع دعم Batching + SHA-3)
 cd test-network
 ./network.sh deployCC \
   -ccn diploma \
@@ -34,20 +43,20 @@ cd test-network
   -ccl go
 cd ..
 
-# 5. محاكاة تأخير ورقة 2025 على الواجهة الصحيحة (eth0)
+# 6. محاكاة تأخير ورقة 2025 (200ms)
 echo "🌐 Simulating Network Delay (200ms) on eth0..."
 sudo tc qdisc add dev eth0 root netem delay 200ms
 
-# 6. إعداد Caliper وتشغيل الاختبار
+# 7. إعداد Caliper وتشغيل الاختبار
 cd caliper-workspace
-npm install   # حل مشكلة npm (الصورة 6)
-mkdir -p networks # حل مشكلة الملف المفقود (الصورة 5)
+npm install
+mkdir -p networks
 
 # البحث عن المفتاح الخاص
 KEY_DIR="../test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore"
 PVT_KEY=$(ls $KEY_DIR/*_sk)
 
-# توليد ملف الإعدادات (مع تصحيح الـ ID إلى diploma)
+# توليد ملف الإعدادات
 cat << EOF > networks/networkConfig.yaml
 name: Caliper-Fabric
 version: "2.0.0"
@@ -71,8 +80,8 @@ organizations:
       discover: true
 EOF
 
-# 7. تشغيل الاختبار النهائي
-echo "🔥 Running Benchmarks..."
+# 8. تشغيل الاختبار النهائي
+echo "🔥 Running Benchmarks (SHA-3 & Batching)..."
 npx caliper launch manager \
     --caliper-workspace . \
     --caliper-networkconfig networks/networkConfig.yaml \
