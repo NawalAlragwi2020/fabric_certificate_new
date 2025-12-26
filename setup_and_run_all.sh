@@ -37,8 +37,8 @@ cd ../..
 cd test-network
 ./network.sh deployCC \
   -ccn diploma \
-  -ccv 2.0 \
-  -ccs 1 \
+  -ccv 3.0 \
+  -ccs 2 \
   -ccp ../asset-transfer-basic/chaincode-go \
   -ccl go
 cd ..
