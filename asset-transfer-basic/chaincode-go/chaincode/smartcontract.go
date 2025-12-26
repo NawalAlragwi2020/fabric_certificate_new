@@ -146,13 +146,14 @@ func (s *SmartContract) VerifyDiploma(ctx contractapi.TransactionContextInterfac
 	return calculatedHash == diploma.CertificateHash, nil
 }
 
-// DiplomaExists returns true when diploma with given ID exists in world state
-func (s *SmartContract) DiplomaExists(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
-	diplomaJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return false, fmt.Errorf("failed to read from world state: %v", err)
-	}
-	return diplomaJSON != nil, nil
+// DiplomaExists checks if a diploma exists in the world state
+func (s *SmartContract) DiplomaExists(ctx contractapi.TransactionContextInterface, hashedID string) (bool, error) {
+    // نستخدم hashedID مباشرة كما هو مرسل
+    diplomaJSON, err := ctx.GetStub().GetState(hashedID)
+    if err != nil {
+        return false, fmt.Errorf("failed to read from world state: %v", err)
+    }
+    return diplomaJSON != nil, nil
 }
 
 // GetAllDiplomas returns all diplomas found in world state

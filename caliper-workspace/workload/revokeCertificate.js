@@ -5,36 +5,28 @@ const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 class RevokeCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
-        this.txIndex = 0;
     }
 
-    /**
-    * تهيئة البيانات قبل بدء الاختبار
-    */
-    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, caliperEngine, adapter, blockchainConfig) {
-        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, caliperEngine, adapter, blockchainConfig);
+    async initializeWorkloadModule(workerIndex, totalWorkers, numberofIndices, sutAdapter, sutContext) {
+        await super.initializeWorkloadModule(workerIndex, totalWorkers, numberofIndices, sutAdapter, sutContext);
     }
 
-    /**
-    * إرسال معاملات الإلغاء
-    */
     async submitTransaction() {
-        this.txIndex++;
+        // 1. تحديد النمط: يجب أن يكون مطابقاً تماماً لما تم استخدامه في issueDiplomaBatch.js
+        // نحن نفترض هنا أن الإصدار استخدم النمط: "Cert_WorkerIndex_TransactionIndex"
         
-        // توليد المعرف ليتطابق مع الشهادات التي تم إصدارها (مثلاً Cert_0_1)
-        const certificateId = `Cert_${this.workerIndex}_${this.txIndex}`;
-        const revocationReason = 'Incorrect Data or Degree Revocation';
+        // توليد رقم عشوائي ضمن نطاق المعاملات التي تمت في مرحلة الإصدار (مثلاً أول 100 معاملة)
+        const randomTxIndex = Math.floor(Math.random() * 100); 
+        const certID = `Cert_${this.workerIndex}_${randomTxIndex}`;
 
-        const request = {
+        const requestSettings = {
             contractId: 'diploma',
-            contractFunction: 'RevokeCertificate', // يجب أن يطابق الاسم في ملف الـ Go
-            invokerIdentity: 'User1',
-            // التأكيد: هنا نرسل وسيطين (id و reason) كما تطلب دالة الـ Go
-            contractArguments: [certificateId, revocationReason],
+            contractFunction: 'RevokeCertificate',
+            contractArguments: [certID, 'Administrative decision for revocation'],
             readOnly: false
         };
 
-        await this.sutAdapter.sendRequests(request);
+        await this.sutAdapter.sendRequests(requestSettings);
     }
 }
 
