@@ -30,6 +30,7 @@ echo "🛡️ جاري تجهيز المكتبات الأمنية (SHA-3/Keccak)
 cd asset-transfer-basic/chaincode-go
 go get golang.org/x/crypto/sha3
 go mod tidy
+go mod vendor
 cd ../..
 # ============================================================
 
@@ -37,8 +38,8 @@ cd ../..
 cd test-network
 ./network.sh deployCC \
   -ccn diploma \
-  -ccv 3.0 \
-  -ccs 2 \
+  -ccv 2.0 \
+  -ccs 1 \
   -ccp ../asset-transfer-basic/chaincode-go \
   -ccl go
 cd ..
