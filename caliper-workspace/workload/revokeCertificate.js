@@ -8,15 +8,29 @@ class RevokeCertificateWorkload extends WorkloadModuleBase {
         this.txIndex = 0;
     }
 
+    /**
+    * تهيئة البيانات قبل بدء الاختبار
+    */
+    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, caliperEngine, adapter, blockchainConfig) {
+        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, caliperEngine, adapter, blockchainConfig);
+    }
+
+    /**
+    * إرسال معاملات الإلغاء
+    */
     async submitTransaction() {
         this.txIndex++;
-        // نحذف نفس الشهادة التي تم إنشاؤها
-        const certID = `cert_${this.workerIndex}_${this.txIndex}`;
+        
+        // توليد المعرف ليتطابق مع الشهادات التي تم إصدارها (مثلاً Cert_0_1)
+        const certificateId = `Cert_${this.workerIndex}_${this.txIndex}`;
+        const revocationReason = 'Incorrect Data or Degree Revocation';
 
         const request = {
-            contractId: 'basic',
-            contractFunction: 'DeleteAsset',
-            contractArguments: [certID],
+            contractId: 'diploma',
+            contractFunction: 'RevokeCertificate', // يجب أن يطابق الاسم في ملف الـ Go
+            invokerIdentity: 'User1',
+            // التأكيد: هنا نرسل وسيطين (id و reason) كما تطلب دالة الـ Go
+            contractArguments: [certificateId, revocationReason],
             readOnly: false
         };
 

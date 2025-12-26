@@ -1,11 +1,11 @@
 test:
-  name: integrated-diploma-benchmark-v4
-  description: 'الاختبار الشامل والمطور: يدمج كفاءة الإصدار والأمان العالي والتحقق تحت الحمل العالي'
+  name: integrated-diploma-benchmark-v5
+  description: 'الاختبار النهائي الشامل: يدمج الإصدار، التحقق العالي، وإلغاء الشهادات'
   workers:
     type: local
     number: 2
   rounds:
-    # 1. جولة الإصدار المجمع (Batching)
+    # 1. جولة الإصدار المجمع
     - label: Issue-Certificates-SHA3-Batch
       description: إصدار شهادات مجمعة ومشفرة بـ SHA-3
       txDuration: 30
@@ -16,20 +16,31 @@ test:
       workload:
         module: workload/issueDiplomaBatch.js
 
-    # 2. جولة التحقق تحت الحمل العالي (High Load) - المسمى المطلوب
+    # 2. جولة التحقق تحت الحمل العالي (High Load)
     - label: Verify-Certificate-High-Load-SHA3
       description: التحقق اللحظي من الشهادات باستخدام SHA-3 تحت حمل عالٍ
       txDuration: 30
       rateControl:
         type: fixed-rate
         opts:
-          tps: 200 # معدل مرتفع يمثل حالة الـ High Load
+          tps: 200
       workload:
         module: workload/verifyDiploma.js
 
-    # 3. جولة اختبار الجهد المتصاعد (Stress Test)
+    # 3. جولة إلغاء الشهادات (الجديدة)
+    - label: Revoke-Certificate-Maintenance
+      description: إلغاء الشهادات الأكاديمية لضمان سلامة السجلات
+      txDuration: 20
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 20 # معدل منخفض لضمان استقرار النتائج
+      workload:
+        module: workload/revokeCertificate.js
+
+    # 4. جولة اختبار الجهد المتصاعد
     - label: Stress-Test-Scaling
-      description: اختبار قدرة الشبكة من 50 إلى 400 TPS
+      description: اختبار قدرة الشبكة حتى 400 TPS
       txDuration: 40
       rateControl:
         type: linear-rate
@@ -39,13 +50,13 @@ test:
       workload:
         module: workload/issueDiplomaBatch.js
 
-    # 4. جولة الاستعلام المنضبط (Optimized Query)
+    # 5. جولة الاستعلام المنضبط
     - label: Query-All-Optimized
-      description: جلب كافة الأصول بمعدل منخفض لضمان استقرار الذاكرة
+      description: جلب كافة الأصول بمعدل منخفض لتجنب ضغط الذاكرة
       txDuration: 15 
       rateControl:
         type: fixed-rate
         opts:
-          tps: 1 # لتقليل نسبة الفشل التي ظهرت سابقاً
+          tps: 1
       workload:
         module: workload/queryAllDiplomas.js
