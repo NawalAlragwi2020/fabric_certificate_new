@@ -16,16 +16,16 @@ test:
       workload:
         module: workload/issueDiplomaBatch.js
 
-    # 2. جولة التحقق تحت الحمل العالي (High Load)
-    #- label: Verify-Certificate-High-Load-SHA3
-     # description: التحقق اللحظي من الشهادات باستخدام SHA-3 تحت حمل عالٍ
-      #txDuration: 30
-      #rateControl:
-       # type: fixed-rate
-        #opts:
-         # tps: 200
-      #workload:
-       # module: workload/verifyDiploma.js
+    #2. جولة التحقق تحت الحمل العالي (High Load)
+    - label: Verify-Certificate-High-Load-SHA3
+      description: التحقق اللحظي من الشهادات باستخدام SHA-3 تحت حمل عالٍ
+      txDuration: 30
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 200
+      workload:
+        module: workload/verifyDiploma.js
 
     # 3. جولة إلغاء الشهادات (الجديدة)
     - label: Revoke-Certificate-Maintenance
@@ -38,17 +38,17 @@ test:
       workload:
         module: workload/revokeCertificate.js
 
-    # 4. جولة اختبار الجهد المتصاعد
-    #- label: Stress-Test-Scaling
-     # description: اختبار قدرة الشبكة حتى 400 TPS
-      #txDuration: 40
-      #rateControl:
-       # type: linear-rate
-        #opts:
-         # startingTps: 50
-          #finishingTps: 400
-      #workload:
-       # module: workload/issueDiplomaBatch.js
+  #   4. جولة اختبار الجهد المتصاعد
+    - label: Stress-Test-Scaling
+      description: اختبار قدرة الشبكة حتى 400 TPS
+      txDuration: 40
+      rateControl:
+        type: linear-rate
+        opts:
+          startingTps: 50
+          finishingTps: 400
+      workload:
+        module: workload/issueDiplomaBatch.js
 
     # 5. جولة الاستعلام المنضبط
     - label: Query-All-Optimized

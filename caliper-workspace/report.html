@@ -128,14 +128,16 @@
                 <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
                 <li>Name: &nbsp<span style="font-weight: 500;">integrated-diploma-benchmark-v5</span></li>
                 <li>Description: &nbsp<span style="font-weight: 500;">الاختبار النهائي الشامل: يدمج الإصدار، التحقق العالي، وإلغاء الشهادات</span></li>
-                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">3</span></li>
+                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">5</span></li>
                 <li><a href="#benchmarkInfo">Details</a></li>
             </ul>
             <ul>
                 <h3>&nbspBenchmark results</h3>
                 <li><a href="#benchmarksummary">Summary</a></li>
                     <li><a href="#Issue-Certificates-SHA3-Batch">Issue-Certificates-SHA3-Batch</a></li>
+                    <li><a href="#Verify-Certificate-High-Load-SHA3">Verify-Certificate-High-Load-SHA3</a></li>
                     <li><a href="#Revoke-Certificate-Maintenance">Revoke-Certificate-Maintenance</a></li>
+                    <li><a href="#Stress-Test-Scaling">Stress-Test-Scaling</a></li>
                     <li><a href="#Query-All-Optimized">Query-All-Optimized</a></li>
             </ul>
             <ul>
@@ -154,13 +156,19 @@
                     </tr>
 
                     <tr>
-                         <td>Issue-Certificates-SHA3-Batch</td> <td>1502</td> <td>0</td> <td>50.0</td> <td>1.35</td> <td>0.16</td> <td>0.71</td> <td>48.8</td>
+                         <td>Issue-Certificates-SHA3-Batch</td> <td>1502</td> <td>0</td> <td>50.1</td> <td>1.69</td> <td>0.19</td> <td>0.79</td> <td>48.4</td>
+                    </tr>
+                    <tr>
+                         <td>Verify-Certificate-High-Load-SHA3</td> <td>6002</td> <td>0</td> <td>200.0</td> <td>0.05</td> <td>0.00</td> <td>0.01</td> <td>200.0</td>
                     </tr>
                     <tr>
                          <td>Revoke-Certificate-Maintenance</td> <td>0</td> <td>402</td> <td>20.1</td> <td>-</td> <td>-</td> <td>-</td> <td>20.1</td>
                     </tr>
                     <tr>
-                         <td>Query-All-Optimized</td> <td>18</td> <td>0</td> <td>1.1</td> <td>0.64</td> <td>0.48</td> <td>0.56</td> <td>1.1</td>
+                         <td>Stress-Test-Scaling</td> <td>2882</td> <td>0</td> <td>71.9</td> <td>2.21</td> <td>0.19</td> <td>1.05</td> <td>70.9</td>
+                    </tr>
+                    <tr>
+                         <td>Query-All-Optimized</td> <td>18</td> <td>0</td> <td>1.1</td> <td>2.08</td> <td>1.52</td> <td>1.73</td> <td>1.0</td>
                     </tr>
                 </table>
             </div>
@@ -179,10 +187,31 @@ rateControl:
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Issue-Certificates-SHA3-Batch</td> <td>1502</td> <td>0</td> <td>50.0</td> <td>1.35</td> <td>0.16</td> <td>0.71</td> <td>48.8</td>
+                                     <td>Issue-Certificates-SHA3-Batch</td> <td>1502</td> <td>0</td> <td>50.1</td> <td>1.69</td> <td>0.19</td> <td>0.79</td> <td>48.4</td>
                                 </tr>
                             </table>
                         <h3>Resource utilization for Issue-Certificates-SHA3-Batch</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Verify-Certificate-High-Load-SHA3">
+                <h2>Benchmark round: Verify-Certificate-High-Load-SHA3</h2>
+                <p>التحقق اللحظي من الشهادات باستخدام SHA-3 تحت حمل عالٍ</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
+rateControl:
+  type: fixed-rate
+  opts:
+    tps: 200
+</pre>
+                        <h3>Performance metrics for Verify-Certificate-High-Load-SHA3</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>Verify-Certificate-High-Load-SHA3</td> <td>6002</td> <td>0</td> <td>200.0</td> <td>0.05</td> <td>0.00</td> <td>0.01</td> <td>200.0</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for Verify-Certificate-High-Load-SHA3</h3>
             </div>
 
             <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Revoke-Certificate-Maintenance">
@@ -206,6 +235,28 @@ rateControl:
                         <h3>Resource utilization for Revoke-Certificate-Maintenance</h3>
             </div>
 
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Stress-Test-Scaling">
+                <h2>Benchmark round: Stress-Test-Scaling</h2>
+                <p>اختبار قدرة الشبكة حتى 400 TPS</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 40
+rateControl:
+  type: linear-rate
+  opts:
+    startingTps: 50
+    finishingTps: 400
+</pre>
+                        <h3>Performance metrics for Stress-Test-Scaling</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>Stress-Test-Scaling</td> <td>2882</td> <td>0</td> <td>71.9</td> <td>2.21</td> <td>0.19</td> <td>1.05</td> <td>70.9</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for Stress-Test-Scaling</h3>
+            </div>
+
             <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Query-All-Optimized">
                 <h2>Benchmark round: Query-All-Optimized</h2>
                 <p>جلب كافة الأصول بمعدل منخفض لتجنب ضغط الذاكرة</p>
@@ -221,7 +272,7 @@ rateControl:
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Query-All-Optimized</td> <td>18</td> <td>0</td> <td>1.1</td> <td>0.64</td> <td>0.48</td> <td>0.56</td> <td>1.1</td>
+                                     <td>Query-All-Optimized</td> <td>18</td> <td>0</td> <td>1.1</td> <td>2.08</td> <td>1.52</td> <td>1.73</td> <td>1.0</td>
                                 </tr>
                             </table>
                         <h3>Resource utilization for Query-All-Optimized</h3>
@@ -245,6 +296,15 @@ rounds:
         tps: 50
     workload:
       module: workload&#x2F;issueDiplomaBatch.js
+  - label: Verify-Certificate-High-Load-SHA3
+    description: التحقق اللحظي من الشهادات باستخدام SHA-3 تحت حمل عالٍ
+    txDuration: 30
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 200
+    workload:
+      module: workload&#x2F;verifyDiploma.js
   - label: Revoke-Certificate-Maintenance
     description: إلغاء الشهادات الأكاديمية لضمان سلامة السجلات
     txDuration: 20
@@ -254,6 +314,16 @@ rounds:
         tps: 20
     workload:
       module: workload&#x2F;revokeCertificate.js
+  - label: Stress-Test-Scaling
+    description: اختبار قدرة الشبكة حتى 400 TPS
+    txDuration: 40
+    rateControl:
+      type: linear-rate
+      opts:
+        startingTps: 50
+        finishingTps: 400
+    workload:
+      module: workload&#x2F;issueDiplomaBatch.js
   - label: Query-All-Optimized
     description: جلب كافة الأصول بمعدل منخفض لتجنب ضغط الذاكرة
     txDuration: 15
