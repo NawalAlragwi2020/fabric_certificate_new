@@ -1,46 +1,38 @@
 test:
-  name: certificate-benchmark-test
-  description: Test issuing, verifying, and revoking certificates.
+  name: certificate-verification-benchmark
+  description: "اختبار أداء نظام توثيق الشهادات وحمايتها من التزوير"
   workers:
-    type: local
-    number: 2
+    number: 2 # عدد العمال (العمليات المتوازية)
   rounds:
-    - label: Issue Certificates
-      description: Issuing new certificates (using CreateAsset).
-      txNumber: 30
+    # الجولة الأولى: إصدار الشهادات
+    - label: issueCertificate
+      description: "إصدار شهادات رقمية وتخزين بصمة SHA-256"
+      txNumber: 100 # إجمالي عدد الشهادات المراد إصدارها
       rateControl:
-        type: fixed-load
+        type: fixed-rate
         opts:
-          transactionLoad: 2
+          tps: 10 # إرسال 10 شهادات في الثانية
       workload:
-        module: workload/issueCertificate.js
+        module: benchmarks/issueCertificate.js
 
-    - label: Verify a Certificate
-      description: Verifying certificates exist (using ReadAsset).
-      txNumber: 30
+    # الجولة الثانية: التحقق من الشهادات (الاختبار الأهم)
+    - label: verifyCertificate
+      description: "التحقق من صحة الشهادات ومقارنة البصمات"
+      txNumber: 100
       rateControl:
-        type: fixed-load
+        type: fixed-rate
         opts:
-          transactionLoad: 2
+          tps: 20 # التحقق أسرع عادة من الإصدار
       workload:
-        module: workload/verifyCertificate.js
+        module: benchmarks/verifyCertificate.js
 
-    - label: Query All Certificates
-      description: Browsing all certificates (using GetAllAssets).
-      txNumber: 10
+    # الجولة الثالثة: الاستعلام عن جميع الشهادات
+    - label: queryAllCertificates
+      description: "قراءة سجلات الشهادات من البلوكشين"
+      txDuration: 30 # استمر في الاستعلام لمدة 30 ثانية
       rateControl:
-        type: fixed-load
+        type: fixed-rate
         opts:
-          transactionLoad: 1
+          tps: 5
       workload:
-        module: workload/queryAllCertificates.js
-
-    - label: Revoke Certificate
-      description: Revoking/Deleting certificates (using DeleteAsset).
-      txNumber: 30
-      rateControl:
-        type: fixed-load
-        opts:
-          transactionLoad: 2
-      workload:
-        module: workload/revokeCertificate.js
+        module: benchmarks/queryAllCertificates.js
