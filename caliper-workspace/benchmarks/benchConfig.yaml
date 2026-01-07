@@ -13,7 +13,7 @@ test:
         opts:
           tps: 10 # معدل الإرسال المطلوب
       workload:
-        module: benchmarks/issueCertificate.js
+        module: workload/issueCertificate.js
 
     # الجولة الثانية: التحقق من الشهادات
     - label: verifyCertificate
@@ -24,7 +24,7 @@ test:
         opts:
           tps: 10
       workload:
-        module: benchmarks/verifyCertificate.js
+        module: workload/verifyCertificate.js
 
     # الجولة الثالثة: الاستعلام (Query)
     - label: queryAllCertificates
@@ -35,4 +35,4 @@ test:
         opts:
           tps: 10
       workload:
-        module: benchmarks/queryAllCertificates.js
+        module: workload/queryAllCertificates.js
