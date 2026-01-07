@@ -1,39 +1,38 @@
 test:
-  name: certificate-verification-benchmark
-  description: "اختبار أداء نظام توثيق الشهادات وحمايتها من التزوير - مطابق لورقة العمل"
+  name: baseline-comparison-benchmark
+  description: "محاكاة إعدادات الوضع الطبيعي لورقة العمل (Baseline)"
   workers:
-    number: 5 # تم التعديل من 2 إلى 5 لزيادة التوازي والضغط
-
+    number: 2 # ورقة العمل استخدمت حملاً منخفضاً في البداية
   rounds:
     # الجولة الأولى: إصدار الشهادات
     - label: issueCertificate
-      description: "إصدار شهادات رقمية وتخزين بصمة SHA-256"
-      txNumber: 1000 # تم التعديل من 100 إلى 1000 معاملة
+      description: "إصدار 300 شهادة بمعدل 10 في الثانية"
+      txNumber: 300 # الرقم المستهدف من ورقة العمل
       rateControl:
         type: fixed-rate
         opts:
-          tps: 20 # تم رفعه قليلاً ليتناسب مع زيادة عدد العمال
+          tps: 10 # معدل الإرسال المطلوب
       workload:
         module: benchmarks/issueCertificate.js
 
     # الجولة الثانية: التحقق من الشهادات
     - label: verifyCertificate
-      description: "التحقق من صحة الشهادات ومقارنة البصمات"
-      txNumber: 1000 # تم التعديل من 100 إلى 1000 معاملة
+      description: "التحقق من 300 شهادة بمعدل 10 في الثانية"
+      txNumber: 300
       rateControl:
         type: fixed-rate
         opts:
-          tps: 40 # التحقق عادة ما يكون أسرع في المعالجة
+          tps: 10
       workload:
         module: benchmarks/verifyCertificate.js
 
-    # الجولة الثالثة: الاستعلام عن جميع الشهادات
+    # الجولة الثالثة: الاستعلام (Query)
     - label: queryAllCertificates
-      description: "قراءة سجلات الشهادات من البلوكشين"
-      txNumber: 1000 # تم التغيير من txDuration إلى txNumber لتوحيد المقارنة
+      description: "الاستعلام عن الشهادات لمحاكاة الـ Baseline"
+      txNumber: 300
       rateControl:
         type: fixed-rate
         opts:
-          tps: 30
+          tps: 10
       workload:
         module: benchmarks/queryAllCertificates.js
