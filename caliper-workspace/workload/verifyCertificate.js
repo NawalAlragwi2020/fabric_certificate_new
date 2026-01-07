@@ -1,41 +1,35 @@
 'use strict';
 
 const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
-const crypto = require('crypto');
 
 class VerifyCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
-        this.workerIndex = -1;
+        this.txIndex = 0;
     }
 
-    async initializeWorkloadModule(workerIndex, totalWorkers, numberProtocols, workloadContext) {
-        this.workerIndex = workerIndex;
-    }
-
-    /**
-    * الدالة التي تحاكي عملية التحقق من الشهادة
-    */
     async submitTransaction() {
-        // 1. تحديد معرف الشهادة المراد فحصها
-        // (يفضل أن يكون مطابقاً لمعرف تم إنشاؤه في ملف issueCertificate)
-        const certId = `Cert_${this.workerIndex}_${Math.floor(Math.random() * 100)}`;
+        this.txIndex++;
         
-        // 2. محاكاة عملية حساب Hash لملف شهادة يرفعه المستخدم للتحقق
-        // في الواقع، هذا الـ Hash ينتج عن الملف المرفوع حالياً
-        const randomContent = 'Actual_Certificate_Content_To_Verify'; 
-        const currentFileHash = crypto.createHash('sha256').update(randomContent).digest('hex');
+        // يجب أن يتطابق نمط المعرف مع ما تم إصداره في ملف issueCertificate.js
+        const certID = `CERT_${this.workerIndex}_${this.txIndex}`;
+        const studentName = `Student_${this.workerIndex}_${this.txIndex}`;
+        
+        // إعادة توليد نفس الـ Hash الذي استخدمناه عند الإصدار لمحاكاة عملية تحقق ناجحة
+        const certHash = Buffer.from(certID + studentName).toString('hex');
 
-        // 3. إعداد الطلب لدالة التحقق في العقد الذكي (Go)
-        const requestSettings = {
+        const request = {
             contractId: 'basic',
-            contractFunction: 'VerifyCertificate',
-            contractArguments: [certId, currentFileHash],
-            readOnly: true // التحقق هو عملية قراءة واستعلام فقط
+            // استدعاء دالة التحقق الذكية التي كتبناها في Go
+            contractFunction: 'VerifyCertificate', 
+            contractArguments: [
+                certID, 
+                certHash
+            ],
+            readOnly: true // التحقق هو عملية قراءة ولا يغير في حالة البلوكشين
         };
 
-        // إرسال الطلب واستلام النتيجة (true إذا كانت سليمة، false إذا تم التلاعب بالـ Hash)
-        await this.sutAdapter.sendRequests(requestSettings);
+        await this.sutAdapter.sendRequests(request);
     }
 }
 
