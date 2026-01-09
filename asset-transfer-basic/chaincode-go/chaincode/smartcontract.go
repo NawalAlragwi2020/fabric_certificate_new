@@ -1,8 +1,13 @@
 package chaincode
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/hyperledger/fabric-contract-api-go/v2/contractapi"
 )
@@ -11,36 +16,61 @@ type SmartContract struct {
 	contractapi.Contract
 }
 
-// Certificate تعريف هيكل الشهادة
+// مفتاح التشفير (يجب أن يكون 32 بايت لـ AES-256)
+var encryptionKey = []byte("asupersecretkeythatis32byteslong")
+
 type Certificate struct {
-	CertHash    string `json:"CertHash"`    // بصمة ملف الشهادة لمنع التزوير
-	Degree      string `json:"Degree"`      // التخصص أو الدرجة
-	ID          string `json:"ID"`          // الرقم التسلسلي للشهادة
-	IsRevoked   bool   `json:"IsRevoked"`   // حالة الشهادة (ملغية أم لا)
-	IssueDate   string `json:"IssueDate"`   // تاريخ الصدور
-	Issuer      string `json:"Issuer"`      // الجهة المانحة للشهادة
-	StudentName string `json:"StudentName"` // اسم الطالب
+	CertHash    string `json:"CertHash"`
+	Degree      string `json:"Degree"`
+	ID          string `json:"ID"`
+	IsRevoked   bool   `json:"IsRevoked"`
+	IssueDate   string `json:"IssueDate"`
+	Issuer      string `json:"Issuer"`
+	StudentName string `json:"StudentName"`
 }
 
-// 1. IssueCertificate: إصدار شهادة جديدة
+// دالة التشفير المساعدة
+func encrypt(text []byte, key []byte) (string, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+	ciphertext := make([]byte, aes.BlockSize+len(text))
+	iv := ciphertext[:aes.Size]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return "", err
+	}
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], text)
+	return base64.StdEncoding.EncodeToString(ciphertext), nil
+}
+
+// 1. IssueCertificate: متوافقة تماماً مع ملف JS
 func (s *SmartContract) IssueCertificate(ctx contractapi.TransactionContextInterface, id string, studentName string, degree string, issuer string, certHash string, issueDate string) error {
 	exists, err := s.CertificateExists(ctx, id)
 	if err != nil {
 		return err
 	}
 	if exists {
-		return fmt.Errorf("الشهادة ذات الرقم %s موجودة مسبقاً", id)
+		return fmt.Errorf("الشهادة %s موجودة مسبقاً", id)
+	}
+
+	// تشفير اسم الطالب قبل حفظه (لحماية الخصوصية كما في SecureBlockCert)
+	encryptedName, err := encrypt([]byte(studentName), encryptionKey)
+	if err != nil {
+		return fmt.Errorf("فشل التشفير: %v", err)
 	}
 
 	cert := Certificate{
 		ID:          id,
-		StudentName: studentName,
+		StudentName: encryptedName,
 		Degree:      degree,
 		Issuer:      issuer,
-		CertHash:    certHash,
+		CertHash:    certHash, // سيستلم الـ HMAC المولد في Caliper
 		IssueDate:   issueDate,
-		IsRevoked:   false, // الشهادة فعالة عند الإصدار
+		IsRevoked:   false,
 	}
+
 	certJSON, err := json.Marshal(cert)
 	if err != nil {
 		return err
@@ -49,56 +79,20 @@ func (s *SmartContract) IssueCertificate(ctx contractapi.TransactionContextInter
 	return ctx.GetStub().PutState(id, certJSON)
 }
 
-// 2. QueryAllCertificates: استعلام عن جميع الشهادات المخزنة
-func (s *SmartContract) QueryAllCertificates(ctx contractapi.TransactionContextInterface) ([]*Certificate, error) {
-	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
-	if err != nil {
-		return nil, err
-	}
-	defer resultsIterator.Close()
-
-	var certificates []*Certificate
-	for resultsIterator.HasNext() {
-		queryResponse, err := resultsIterator.Next()
-		if err != nil {
-			return nil, err
-		}
-
-		var cert Certificate
-		err = json.Unmarshal(queryResponse.Value, &cert)
-		if err != nil {
-			return nil, err
-		}
-		certificates = append(certificates, &cert)
-	}
-
-	return certificates, nil
-}
-
-// 3. RevokeCertificate: إلغاء شهادة (في حال التزوير أو الخطأ)
-func (s *SmartContract) RevokeCertificate(ctx contractapi.TransactionContextInterface, id string) error {
-	cert, err := s.ReadCertificate(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	cert.IsRevoked = true // تغيير الحالة إلى ملغية
-	certJSON, err := json.Marshal(cert)
-	if err != nil {
-		return err
-	}
-
-	return ctx.GetStub().PutState(id, certJSON)
-}
-
-// 4. VerifyCertificate: التحقق من صحة الشهادة وصلاحيتها
+// 4. VerifyCertificate: التحقق من بصمة الشهادة (HMAC)
 func (s *SmartContract) VerifyCertificate(ctx contractapi.TransactionContextInterface, id string, certHash string) (bool, error) {
-	cert, err := s.ReadCertificate(ctx, id)
-	if err != nil {
-		return false, fmt.Errorf("الشهادة غير موجودة في السجلات")
+	certJSON, err := ctx.GetStub().GetState(id)
+	if err != nil || certJSON == nil {
+		return false, fmt.Errorf("الشهادة غير موجودة")
 	}
 
-	// التأكد من أن البصمة مطابقة وأن الشهادة ليست ملغية
+	var cert Certificate
+	err = json.Unmarshal(certJSON, &cert)
+	if err != nil {
+		return false, err
+	}
+
+	// مطابقة الـ Hash المرسل من Caliper مع المخزن
 	if cert.CertHash == certHash && !cert.IsRevoked {
 		return true, nil
 	}
@@ -106,26 +100,9 @@ func (s *SmartContract) VerifyCertificate(ctx contractapi.TransactionContextInte
 	return false, nil
 }
 
-// --- وظائف مساعدة ---
-
-func (s *SmartContract) ReadCertificate(ctx contractapi.TransactionContextInterface, id string) (*Certificate, error) {
-	certJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return nil, err
-	}
-	if certJSON == nil {
-		return nil, fmt.Errorf("الشهادة %s غير موجودة", id)
-	}
-
-	var cert Certificate
-	err = json.Unmarshal(certJSON, &cert)
-	return &cert, err
-}
+// --- وظائف مساعدة ضرورية ---
 
 func (s *SmartContract) CertificateExists(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
 	certJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return false, err
-	}
-	return certJSON != nil, nil
+	return certJSON != nil, err
 }
