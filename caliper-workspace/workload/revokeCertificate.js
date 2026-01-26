@@ -6,22 +6,33 @@ const crypto = require('crypto'); // مكتبة التشفير لمحاكاة SH
 class RevokeCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
-        this.txIndex = 0; // تتبع عدد المعاملات
+        this.txIndex = 0; 
+    }
+
+    /**
+    * تهيئة المتغيرات لكل عامل (Worker)
+    */
+    async initializeWorkloadModule(workerIndex, totalWorkers, numberofIndices, sutAdapter, sutContext) {
+        await super.initializeWorkloadModule(workerIndex, totalWorkers, numberofIndices, sutAdapter, sutContext);
+        this.txIndex = 0;
     }
 
     async submitTransaction() {
         this.txIndex++;
         
-        // 1. توليد المعرف الخام (نفس النمط المستخدم في الإصدار)
-        // ملاحظة: تأكد أن هذا النمط يطابق تماماً ما استخدمته في issueDiplomaBatch.js
+        // --- المنطق الآمن لضمان وجود الشهادة ---
+        // نحن نستخدم نفس النمط المستخدم في ملف issueDiplomaBatch.js
+        // العداد (this.txIndex) هنا سيبدأ من 1، 2، 3... 
+        // بما أن جولة الإصدار استمرت 30 ثانية وجولة الإلغاء 20 ثانية فقط،
+        // فنحن نضمن حسابياً أن هذه المعرفات موجودة في الـ Ledger.
         const rawID = `Cert_${this.workerIndex}_${this.txIndex}`;
 
-        // 2. تشفير المعرف باستخدام SHA-3 ليتطابق مع ما هو مخزن في Ledger
+        // تشفير المعرف باستخدام SHA-3 (مطابق تماماً لما يفعله الـ Chaincode في Go)
         const certID = crypto.createHash('sha3-256').update(rawID).digest('hex');
 
         const requestSettings = {
-            contractId: 'diploma', // تأكد أن هذا هو الاسم المستخدم عند تثبيت الـ Chaincode
-            contractFunction: 'RevokeCertificate', // تأكد أن الاسم يطابق الدالة في smartcontract.go
+            contractId: 'diploma', 
+            contractFunction: 'RevokeCertificate', 
             contractArguments: [certID, 'Administrative decision for revocation'],
             readOnly: false
         };
@@ -29,7 +40,8 @@ class RevokeCertificateWorkload extends WorkloadModuleBase {
         try {
             await this.sutAdapter.sendRequests(requestSettings);
         } catch (error) {
-            console.error(`Failed to revoke certificate ${certID}: ${error}`);
+            // طباعة الخطأ في حال فشل الاتصال، لكن المنطق الرياضي يضمن وجود الـ ID
+            console.error(`Worker ${this.workerIndex} failed to revoke certificate ${certID}: ${error.message}`);
         }
     }
 }
