@@ -1,32 +1,36 @@
 'use strict';
 
 const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
+const crypto = require('crypto'); // مكتبة التشفير لمحاكاة SHA-3
 
 class RevokeCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
-    }
-
-    async initializeWorkloadModule(workerIndex, totalWorkers, numberofIndices, sutAdapter, sutContext) {
-        await super.initializeWorkloadModule(workerIndex, totalWorkers, numberofIndices, sutAdapter, sutContext);
+        this.txIndex = 0; // تتبع عدد المعاملات
     }
 
     async submitTransaction() {
-        // 1. تحديد النمط: يجب أن يكون مطابقاً تماماً لما تم استخدامه في issueDiplomaBatch.js
-        // نحن نفترض هنا أن الإصدار استخدم النمط: "Cert_WorkerIndex_TransactionIndex"
+        this.txIndex++;
         
-        // توليد رقم عشوائي ضمن نطاق المعاملات التي تمت في مرحلة الإصدار (مثلاً أول 100 معاملة)
-        const randomTxIndex = Math.floor(Math.random() * 100); 
-        const certID = `Cert_${this.workerIndex}_${randomTxIndex}`;
+        // 1. توليد المعرف الخام (نفس النمط المستخدم في الإصدار)
+        // ملاحظة: تأكد أن هذا النمط يطابق تماماً ما استخدمته في issueDiplomaBatch.js
+        const rawID = `Cert_${this.workerIndex}_${this.txIndex}`;
+
+        // 2. تشفير المعرف باستخدام SHA-3 ليتطابق مع ما هو مخزن في Ledger
+        const certID = crypto.createHash('sha3-256').update(rawID).digest('hex');
 
         const requestSettings = {
-            contractId: 'diploma',
-            contractFunction: 'RevokeCertificate',
+            contractId: 'diploma', // تأكد أن هذا هو الاسم المستخدم عند تثبيت الـ Chaincode
+            contractFunction: 'RevokeCertificate', // تأكد أن الاسم يطابق الدالة في smartcontract.go
             contractArguments: [certID, 'Administrative decision for revocation'],
             readOnly: false
         };
 
-        await this.sutAdapter.sendRequests(requestSettings);
+        try {
+            await this.sutAdapter.sendRequests(requestSettings);
+        } catch (error) {
+            console.error(`Failed to revoke certificate ${certID}: ${error}`);
+        }
     }
 }
 
