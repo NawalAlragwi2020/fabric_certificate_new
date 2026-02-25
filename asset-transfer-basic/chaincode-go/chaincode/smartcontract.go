@@ -7,52 +7,68 @@ import (
 	"github.com/hyperledger/fabric-contract-api-go/v2/contractapi"
 )
 
-// SmartContract defines the structure for our certificate functions
 type SmartContract struct {
 	contractapi.Contract
 }
 
-// Certificate Structure representing the degree data in CouchDB
+///////////////////////////////////////////////////////////
+// Certificate Structure
+///////////////////////////////////////////////////////////
+
 type Certificate struct {
-	CertHash    string `json:"CertHash"`
-	Degree      string `json:"Degree"`
 	ID          string `json:"ID"`
-	IsRevoked   bool   `json:"IsRevoked"`
-	IssueDate   string `json:"IssueDate"`
-	Issuer      string `json:"Issuer"`
 	StudentName string `json:"StudentName"`
+	Degree      string `json:"Degree"`
+	Issuer      string `json:"Issuer"`
+	IssueDate   string `json:"IssueDate"`
+	CertHash    string `json:"CertHash"`
+	IsRevoked   bool   `json:"IsRevoked"`
 }
 
-// Helper: getClientMSP retrieves the organization ID of the caller
+///////////////////////////////////////////////////////////
+// MSP Helper
+///////////////////////////////////////////////////////////
+
 func (s *SmartContract) getClientMSP(ctx contractapi.TransactionContextInterface) (string, error) {
-	clientIdentity := ctx.GetClientIdentity()
-	mspID, err := clientIdentity.GetMSPID()
+	mspID, err := ctx.GetClientIdentity().GetMSPID()
 	if err != nil {
-		return "", fmt.Errorf("failed to read client identity: %v", err)
+		return "", fmt.Errorf("failed to read client MSP: %v", err)
 	}
 	return mspID, nil
 }
 
+///////////////////////////////////////////////////////////
 // 1️⃣ IssueCertificate (Org1 Only)
+///////////////////////////////////////////////////////////
+
 func (s *SmartContract) IssueCertificate(
 	ctx contractapi.TransactionContextInterface,
 	id string,
 	studentName string,
 	degree string,
 	issuer string,
-	certHash string,
-	issueDate string) error {
+	issueDate string,   // ✅ الترتيب الصحيح
+	certHash string,    // ✅ الترتيب الصحيح
+) error {
 
-	// RBAC CHECK
 	mspID, err := s.getClientMSP(ctx)
-	if err != nil || mspID != "Org1MSP" {
+	if err != nil {
+		return err
+	}
+
+	if mspID != "Org1MSP" {
 		return fmt.Errorf("access denied: only Org1 can issue certificates")
+	}
+
+	if id == "" || studentName == "" || degree == "" || issuer == "" || issueDate == "" || certHash == "" {
+		return fmt.Errorf("all fields are required")
 	}
 
 	exists, err := s.CertificateExists(ctx, id)
 	if err != nil {
 		return err
 	}
+
 	if exists {
 		return fmt.Errorf("certificate %s already exists", id)
 	}
@@ -62,8 +78,8 @@ func (s *SmartContract) IssueCertificate(
 		StudentName: studentName,
 		Degree:      degree,
 		Issuer:      issuer,
-		CertHash:    certHash,
 		IssueDate:   issueDate,
+		CertHash:    certHash,
 		IsRevoked:   false,
 	}
 
@@ -75,79 +91,104 @@ func (s *SmartContract) IssueCertificate(
 	return ctx.GetStub().PutState(id, certJSON)
 }
 
+///////////////////////////////////////////////////////////
 // 2️⃣ RevokeCertificate (Org2 Only)
+///////////////////////////////////////////////////////////
+
 func (s *SmartContract) RevokeCertificate(
 	ctx contractapi.TransactionContextInterface,
-	id string) error {
+	id string,
+) error {
 
 	mspID, err := s.getClientMSP(ctx)
-	if err != nil || mspID != "Org2MSP" {
+	if err != nil {
+		return err
+	}
+
+	if mspID != "Org2MSP" {
 		return fmt.Errorf("access denied: only Org2 can revoke certificates")
 	}
 
-	cert, err := s.ReadCertificate(ctx, id)
+	if id == "" {
+		return fmt.Errorf("certificate ID is required")
+	}
+
+	// ✅ لا نعتبر عدم وجود الشهادة فشل
+	certJSON, err := ctx.GetStub().GetState(id)
+	if err != nil {
+		return err
+	}
+
+	if certJSON == nil {
+		return nil
+	}
+
+	var cert Certificate
+	err = json.Unmarshal(certJSON, &cert)
 	if err != nil {
 		return err
 	}
 
 	if cert.IsRevoked {
-		return nil 
+		return nil
 	}
 
 	cert.IsRevoked = true
-	certJSON, err := json.Marshal(cert)
+
+	updatedCertJSON, err := json.Marshal(cert)
 	if err != nil {
 		return err
 	}
 
-	return ctx.GetStub().PutState(id, certJSON)
+	return ctx.GetStub().PutState(id, updatedCertJSON)
 }
 
+///////////////////////////////////////////////////////////
 // 3️⃣ VerifyCertificate (Open Read)
+///////////////////////////////////////////////////////////
+
 func (s *SmartContract) VerifyCertificate(
 	ctx contractapi.TransactionContextInterface,
 	id string,
-	certHash string) (bool, error) {
+	certHash string,
+) (bool, error) {
 
-	cert, err := s.ReadCertificate(ctx, id)
+	if id == "" || certHash == "" {
+		return false, fmt.Errorf("certificate ID and hash are required")
+	}
+
+	certJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
-		return false, fmt.Errorf("verification failed: certificate not found")
+		return false, err
+	}
+
+	if certJSON == nil {
+		return false, nil
+	}
+
+	var cert Certificate
+	err = json.Unmarshal(certJSON, &cert)
+	if err != nil {
+		return false, err
 	}
 
 	isValid := cert.CertHash == certHash && !cert.IsRevoked
 	return isValid, nil
 }
 
-// 4️⃣ ReadCertificate (Helper)
-func (s *SmartContract) ReadCertificate(
-	ctx contractapi.TransactionContextInterface,
-	id string) (*Certificate, error) {
+///////////////////////////////////////////////////////////
+// Helper
+///////////////////////////////////////////////////////////
 
-	certJSON, err := ctx.GetStub().GetState(id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read from world state: %v", err)
-	}
-	if certJSON == nil {
-		return nil, fmt.Errorf("certificate %s does not exist", id)
-	}
-
-	var cert Certificate
-	err = json.Unmarshal(certJSON, &cert)
-	if err != nil {
-		return nil, err
-	}
-
-	return &cert, nil
-}
-
-// 5️⃣ CertificateExists (Helper)
 func (s *SmartContract) CertificateExists(
 	ctx contractapi.TransactionContextInterface,
-	id string) (bool, error) {
+	id string,
+) (bool, error) {
 
 	certJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
 		return false, err
 	}
+
 	return certJSON != nil, nil
 }
