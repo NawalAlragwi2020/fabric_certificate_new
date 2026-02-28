@@ -1,0 +1,55 @@
+################################################################################
+# Hyperledger Caliper — Network Configuration
+# Project: BCMS (Blockchain Certificate Management System)
+# Fix Applied:
+#   ✅ discover: false  → avoids RoundRobinQueryHandler / endorsement-plan errors
+#   ✅ asLocalhost: true → correct for test-network outside Docker
+#   ✅ Dynamic key paths resolved at runtime by fix_and_run_caliper.sh
+#   ✅ Two organizations configured (Org1 issues / Org2 revokes)
+################################################################################
+
+name: "BCMS-Certificate-Network"
+version: "2.0.0"
+
+caliper:
+  blockchain: fabric
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Channel + Deployed Chaincode
+# ─────────────────────────────────────────────────────────────────────────────
+channels:
+  - channelName: mychannel
+    contracts:
+      - id: basic          # Must match: ./network.sh deployCC -ccn basic …
+        contractID: basic
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Organizations
+# ─────────────────────────────────────────────────────────────────────────────
+organizations:
+
+  # ── Org1 (Issues Certificates) ────────────────────────────────────────────
+  - mspid: Org1MSP
+    identities:
+      certificates:
+        - name: "User1@org1.example.com"
+          clientPrivateKey:
+            path: "./crypto/org1/keystore/key.pem"
+          clientSignedCert:
+            path: "./crypto/org1/signcerts/cert.pem"
+    connectionProfile:
+      path: "networks/connection-org1.yaml"
+      discover: false         # ← Critical fix: disable service discovery
+
+  # ── Org2 (Revokes Certificates) ───────────────────────────────────────────
+  - mspid: Org2MSP
+    identities:
+      certificates:
+        - name: "User1@org2.example.com"
+          clientPrivateKey:
+            path: "./crypto/org2/keystore/key.pem"
+          clientSignedCert:
+            path: "./crypto/org2/signcerts/cert.pem"
+    connectionProfile:
+      path: "networks/connection-org2.yaml"
+      discover: false         # ← Critical fix: disable service discovery
