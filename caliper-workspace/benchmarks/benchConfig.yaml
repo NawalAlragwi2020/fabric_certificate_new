@@ -35,9 +35,10 @@ test:
       rateControl:
         type: fixed-rate
         opts:
-          tps: 50
+          tps: 10
       workload:
         module: workload/issueCertificate.js
+<<<<<<< HEAD
       txOptions:
         invokerIdentity: "User1@org1.example.com"
 
@@ -92,3 +93,5 @@ test:
       txOptions:
         invokerIdentity: "User1@org2.example.com"
       postIterationWaitTime: 3000
+=======
+>>>>>>> 2071aa8 (Fix ROOT_DIR and update successful report)

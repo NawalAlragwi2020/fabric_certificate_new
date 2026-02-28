@@ -68,6 +68,7 @@ fi
 
 success "test-network crypto material found"
 
+<<<<<<< HEAD
 # ══════════════════════════════════════════════════════════════════════════════
 # STEP 2: Dynamically find key files
 # ══════════════════════════════════════════════════════════════════════════════
@@ -241,10 +242,18 @@ CONN1
 
 success "connection-org1.yaml generated"
 
+<<<<<<< HEAD
 # ══════════════════════════════════════════════════════════════════════════════
 # STEP 5: Generate connection-org2.yaml
 # ══════════════════════════════════════════════════════════════════════════════
 step "STEP 5: Generating networks/connection-org2.yaml"
+=======
+# ============================================================
+# 7. EXECUTION: Install dependencies and run Caliper
+# ============================================================
+
+echo "📦 Installing Caliper dependencies..."
+>>>>>>> 2071aa8 (Fix ROOT_DIR and update successful report)
 
 cat > networks/connection-org2.yaml << CONN2
 name: "test-network-org2"
@@ -326,19 +335,24 @@ CONN2
 success "connection-org2.yaml generated"
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STEP 6: Install node dependencies + bind to Fabric 2.5
+# STEP 6: Install node dependencies and bind Caliper
 # ══════════════════════════════════════════════════════════════════════════════
 step "STEP 6: Installing Caliper dependencies"
-
 npm install --quiet
 
-step "Binding Caliper to Fabric 2.5"
-npx caliper bind \
-    --caliper-bind-sut fabric:2.5 \
-    --caliper-bind-cwd ./ \
-    --caliper-bind-args="-g" 2>&1 | tail -5
+# export required environment variables
+export CALIPER_WORKSPACE="$(pwd)"
+export CALIPER_BIND_SUT=${CALIPER_BIND_SUT:-fabric:2.2}
 
-success "Caliper bound to fabric:2.5"
+info "Binding Caliper to $CALIPER_BIND_SUT"
+npx caliper bind --caliper-bind-sut $CALIPER_BIND_SUT --caliper-bind-cwd ./ --caliper-bind-args="-g" 2>&1 | tail -5
+
+success "Caliper bound to $CALIPER_BIND_SUT"
+
+# verify network config exists before launch
+if [ ! -f "networks/networkConfig.yaml" ]; then
+    error "networks/networkConfig.yaml not found. Cannot start Caliper."
+fi
 
 # ══════════════════════════════════════════════════════════════════════════════
 # STEP 7: Run the benchmark
