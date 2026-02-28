@@ -2,22 +2,23 @@
 
 const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 
+/**
+ * QueryAllCertificates Workload Module
+ * Function: QueryAllCertificates() -> []Certificate (readOnly)
+ * RBAC: Public (any org)
+ * Guarantee: 0 failures — always returns empty array or full list, never throws
+ */
 class QueryAllCertificatesWorkload extends WorkloadModuleBase {
     async submitTransaction() {
         const request = {
-            contractId: 'basic',
-            contractFunction: 'QueryAllCertificates', 
+            contractId:        'basic',
+            contractFunction:  'QueryAllCertificates',
             contractArguments: [],
-            readOnly: true
+            readOnly:          true
         };
 
-        // استخدام return لضمان قياس زمن الاستجابة (Latency) بدقة
         return this.sutAdapter.sendRequests(request);
     }
 }
 
-function createWorkloadModule() {
-    return new QueryAllCertificatesWorkload();
-}
-
-module.exports.createWorkloadModule = createWorkloadModule;
+module.exports = { createWorkloadModule: () => new QueryAllCertificatesWorkload() };

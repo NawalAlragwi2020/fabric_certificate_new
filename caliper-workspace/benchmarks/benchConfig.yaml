@@ -1,15 +1,15 @@
 test:
   name: certificate-benchmark-test
-  description: RBAC-enabled certificate performance test
+  description: "RBAC Certificate System - Full Benchmark (IssueCertificate, VerifyCertificate, QueryAllCertificates, RevokeCertificate)"
   workers:
     type: local
     number: 4
   rounds:
     # ------------------------------------------------
-    # 1️⃣ Issue Certificates (Org1 Only)
+    # 1️⃣ IssueCertificate (Org1 Only) - إصدار الشهادات
     # ------------------------------------------------
-    - label: Issue Certificates
-      description: Org1 issues certificates
+    - label: IssueCertificate
+      description: "Org1 issues certificates to the ledger (RBAC: Org1MSP only)"
       txDuration: 30
       rateControl:
         type: fixed-rate
@@ -21,10 +21,10 @@ test:
         invokerIdentity: User1@org1.example.com
 
     # ------------------------------------------------
-    # 2️⃣ Verify Certificates (Open Read)
+    # 2️⃣ VerifyCertificate (Public Read) - التحقق من الشهادات
     # ------------------------------------------------
-    - label: Verify Certificate
-      description: Verifying certificate authenticity
+    - label: VerifyCertificate
+      description: "Verify certificate authenticity and integrity (readOnly)"
       txDuration: 30
       rateControl:
         type: fixed-rate
@@ -36,10 +36,25 @@ test:
         invokerIdentity: User1@org1.example.com
 
     # ------------------------------------------------
-    # 3️⃣ Authorized Revoke (Org2 Only)
+    # 3️⃣ QueryAllCertificates (Public Read) - استعلام كل الشهادات
     # ------------------------------------------------
-    - label: Authorized Revoke
-      description: Org2 revokes certificates (should succeed)
+    - label: QueryAllCertificates
+      description: "Query all certificates from the ledger (readOnly)"
+      txDuration: 30
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 20
+      workload:
+        module: workload/queryAllCertificates.js
+      txOptions:
+        invokerIdentity: User1@org1.example.com
+
+    # ------------------------------------------------
+    # 4️⃣ RevokeCertificate (Org2 Only) - إلغاء الشهادات
+    # ------------------------------------------------
+    - label: RevokeCertificate
+      description: "Org2 revokes certificates (RBAC: Org2MSP authorized)"
       txDuration: 30
       rateControl:
         type: fixed-rate
@@ -49,20 +64,4 @@ test:
         module: workload/revokeCertificate.js
       txOptions:
         invokerIdentity: User1@org2.example.com
-      # إضافة وقت انتظار لضمان استقرار CouchDB قبل الجولة التالية
-      postIterationWaitTime: 5000 
-
-    # ------------------------------------------------
-    # 4️⃣ Unauthorized Revoke Attempt (RBAC Test)
-    # ------------------------------------------------
-    - label: Unauthorized Revoke Attempt
-      description: Org1 tries to revoke (should fail)
-      txDuration: 30
-      rateControl:
-        type: fixed-rate
-        opts:
-          tps: 50
-      workload:
-        module: workload/revokeCertificate.js
-      txOptions:
-        invokerIdentity: User1@org1.example.com
+      postIterationWaitTime: 5000

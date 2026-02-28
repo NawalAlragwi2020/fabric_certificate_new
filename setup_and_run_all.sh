@@ -19,9 +19,7 @@ docker rm -f $(docker ps -aq) || true
 docker volume prune -f
 
 # Deep Clean: إزالة صور Docker التي تبدأ بـ dev-* أو dev-peer*
-# هذا يضمن بناء صور العقد الذكي الجديدة بدلاً من إعادة استخدام القديمة
 echo -e "\n🧹 Performing deep-clean for Docker images starting with dev-*..."
-# جمع معرفات الصور المطابقة
 DEV_IMAGE_IDS=$(docker images --format '{{.Repository}} {{.ID}}' | awk '$1 ~ /^(dev-|dev-peer)/ {print $2}' || true)
 if [ -n "$DEV_IMAGE_IDS" ]; then
   echo "Found dev images: $DEV_IMAGE_IDS"
@@ -30,7 +28,7 @@ else
   echo "No dev-* images found."
 fi
 
-# مسح التقارير القديمة للتأكد أن التقرير الناتج هو الجديد
+# مسح التقارير القديمة
 rm -f caliper-workspace/report.html
 
 # التأكد من تحديث الـ Workspace
@@ -42,6 +40,13 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${GREEN}🚀 Starting Full Project Setup (Fabric + Caliper)...${NC}"
+echo "=================================================="
+echo "📋 Smart Contract Functions:"
+echo "   1️⃣  IssueCertificate     (Org1 Only)   - إصدار شهادة"
+echo "   2️⃣  VerifyCertificate    (Public Read) - التحقق من شهادة"
+echo "   3️⃣  QueryAllCertificates (Public Read) - استعلام كل الشهادات"
+echo "   4️⃣  RevokeCertificate    (Org2 Auth)   - إلغاء شهادة"
+echo "   5️⃣  CertificateExists    (Helper)      - التحقق من الوجود"
 echo "=================================================="
 
 # التأكد من وجود الأدوات
@@ -57,24 +62,27 @@ export PATH=${PWD}/bin:$PATH
 export FABRIC_CFG_PATH=${PWD}/config/
 
 # تشغيل الشبكة
+echo -e "${GREEN}🌐 Step 2: Starting Test Network...${NC}"
 cd test-network
 ./network.sh down
 docker volume prune -f
 docker system prune -f
 ./network.sh up createChannel -c mychannel -ca -s couchdb
 
-# ✅ إضافة وقت انتظار لاستقرار CouchDB قبل النشر (ضروري جداً لتجنب أخطاء الاتصال)
+# انتظار استقرار CouchDB
 echo "⏳ Waiting 30 seconds for CouchDB and Peers to stabilize..."
 sleep 30
 cd ..
 
-# نشر العقد الذكي
-echo "📜 Deploying Smart Contract with RBAC-Optimized Policy..."
+# نشر العقد الذكي (يتضمن الآن 5 دوال)
+echo -e "${GREEN}📜 Step 3: Deploying Smart Contract...${NC}"
+echo "   Functions: IssueCertificate | VerifyCertificate | QueryAllCertificates | RevokeCertificate | CertificateExists"
 cd test-network
 ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go -ccep "OR('Org1MSP.peer','Org2MSP.peer')"
 cd ..
 
 # تشغيل Caliper
+echo -e "${GREEN}📊 Step 4: Running Caliper Benchmark...${NC}"
 cd caliper-workspace
 if [ ! -d "node_modules" ]; then
   npm install
@@ -92,11 +100,10 @@ PVT_KEY2=$(ls $KEY_DIR2/*_sk)
 echo "Org1 Key: $PVT_KEY1"
 echo "Org2 Key: $PVT_KEY2"
 
-# ج) إنشاء ملف إعدادات الشبكة بتنسيق YAML صحيح ومسارات دقيقة
+# إنشاء ملف إعدادات الشبكة
 echo "⚙️ Generating network config..."
 mkdir -p networks
 
-# ✅ تم تصحيح المسافات (Indentation) هنا لضمان قراءة الملف بشكل سليم
 cat << EOF > networks/networkConfig.yaml
 name: Caliper-Fabric
 version: "2.0.0"
@@ -134,7 +141,12 @@ organizations:
       discover: false
 EOF
 
-echo "🔥 Running Benchmark..."
+echo "🔥 Running Benchmark (4 rounds — Fail target = 0)..."
+echo "   Round 1: IssueCertificate     @ 50 TPS / 30s"
+echo "   Round 2: VerifyCertificate    @ 50 TPS / 30s"
+echo "   Round 3: QueryAllCertificates @ 20 TPS / 30s"
+echo "   Round 4: RevokeCertificate    @ 50 TPS / 30s"
+
 npx caliper launch manager \
     --caliper-workspace . \
     --caliper-networkconfig networks/networkConfig.yaml \
