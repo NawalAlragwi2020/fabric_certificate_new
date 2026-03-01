@@ -65,8 +65,8 @@ export FABRIC_CFG_PATH=${PWD}/config/
 echo -e "${GREEN}🌐 Step 2: Starting Test Network...${NC}"
 cd test-network
 ./network.sh down
-docker volume prune -f
-docker system prune -f
+#docker volume prune -f
+#docker system prune -f
 ./network.sh up createChannel -c mychannel -ca -s couchdb
 
 # انتظار استقرار CouchDB
