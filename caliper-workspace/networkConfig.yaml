@@ -1,0 +1,54 @@
+# ============================================================
+# Caliper Network Configuration — BCMS Certificate v3.0
+# File: caliper-workspace/networkConfig.yaml
+#
+# Key settings that ensure zero failures:
+#   - discover: false   → Prevents RoundRobinQueryHandler errors
+#   - asLocalhost: true → Correct for test-network outside Docker
+#   - Both Org1 and Org2 identities included
+#   - Dynamic key paths (resolved by fix_and_run_caliper.sh)
+# ============================================================
+
+name: BCMS-Fabric-Network
+version: "2.0"
+
+caliper:
+  blockchain: fabric
+
+info:
+  Version: 2.5.x
+  Size: 2 orgs + 1 orderer
+  Orderer: Raft (EtcdRaft)
+  Distribution: Single host
+  StateDB: CouchDB
+
+channels:
+  - channelName: mychannel
+    contracts:
+      - id: basic
+        contractID: basic
+
+organizations:
+  - mspid: Org1MSP
+    identities:
+      certificates:
+        - name: User1@org1.example.com
+          clientPrivateKey:
+            path: DYNAMIC_ORG1_PRIVATE_KEY
+          clientSignedCert:
+            path: DYNAMIC_ORG1_CERT
+    connectionProfile:
+      path: networks/connection-org1.yaml
+      discover: false
+
+  - mspid: Org2MSP
+    identities:
+      certificates:
+        - name: User1@org2.example.com
+          clientPrivateKey:
+            path: DYNAMIC_ORG2_PRIVATE_KEY
+          clientSignedCert:
+            path: DYNAMIC_ORG2_CERT
+    connectionProfile:
+      path: networks/connection-org2.yaml
+      discover: false

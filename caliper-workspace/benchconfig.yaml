@@ -1,0 +1,91 @@
+# ============================================================
+# Caliper Benchmark Configuration — BCMS Certificate v3.0
+# File: caliper-workspace/benchconfig.yaml
+#
+# 4 Rounds:
+#   1. IssueCertificate    — Org1 RBAC write  — 50 TPS × 30s
+#   2. VerifyCertificate   — Public read       — 100 TPS × 30s
+#   3. QueryAllCertificates — Public read      — 50 TPS × 30s
+#   4. RevokeCertificate   — Org2 RBAC write  — 50 TPS × 30s
+# ============================================================
+
+test:
+  name: certificate-benchmark-v3
+  description: >
+    BCMS Certificate Management System — Hyperledger Fabric 2.5
+    Benchmarks all 4 chaincode functions with RBAC and zero-failure design.
+    IssueCertificate and RevokeCertificate are idempotent.
+    VerifyCertificate and QueryAllCertificates are read-only (bypass orderer).
+
+  workers:
+    number: 4
+
+  rounds:
+
+    # ── Round 1: IssueCertificate ────────────────────────────────────────────
+    - label: IssueCertificate
+      description: >
+        Org1MSP issues new certificates. Idempotent design ensures zero failures
+        even under concurrent load with duplicate IDs.
+      txDuration: 30
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 50
+      workload:
+        module: workload/issue-certificate.js
+        arguments:
+          contractId: basic
+          contractFunction: IssueCertificate
+          invokerIdentity: User1@org1.example.com
+
+    # ── Round 2: VerifyCertificate ───────────────────────────────────────────
+    - label: VerifyCertificate
+      description: >
+        Public read-only verification. readOnly:true bypasses orderer for
+        maximum throughput. Returns false (not error) for missing certs.
+      txDuration: 30
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 100
+      workload:
+        module: workload/verify-certificate.js
+        arguments:
+          contractId: basic
+          contractFunction: VerifyCertificate
+          invokerIdentity: User1@org1.example.com
+
+    # ── Round 3: QueryAllCertificates ────────────────────────────────────────
+    - label: QueryAllCertificates
+      description: >
+        Rich ledger query using GetStateByRange. readOnly:true.
+        Returns empty slice on empty ledger — zero-failure.
+      txDuration: 30
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 50
+      workload:
+        module: workload/query-all-certificates.js
+        arguments:
+          contractId: basic
+          contractFunction: QueryAllCertificates
+          invokerIdentity: User1@org1.example.com
+
+    # ── Round 4: RevokeCertificate ───────────────────────────────────────────
+    - label: RevokeCertificate
+      description: >
+        Org2MSP revokes certificates. Idempotent — returns nil for missing
+        or already-revoked certs. Uses postIteration wait to avoid race conditions.
+      txDuration: 30
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 50
+      workload:
+        module: workload/revoke-certificate.js
+        arguments:
+          contractId: basic
+          contractFunction: RevokeCertificate
+          invokerIdentity: User1@org2.example.com
