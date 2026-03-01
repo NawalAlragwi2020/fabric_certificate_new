@@ -1,10 +1,17 @@
 {
   "name": "caliper-workspace",
   "version": "1.0.0",
-  "description": "Hyperledger Caliper Benchmark",
+  "description": "Hyperledger Caliper Benchmark for BCMS — Blockchain Certificate Management System",
   "private": true,
+  "scripts": {
+    "test": "echo 'Use: npx caliper launch manager --caliper-workspace . --caliper-networkconfig networks/networkConfig.yaml --caliper-benchconfig benchmarks/benchConfig.yaml --caliper-flow-only-test'",
+    "validate-config": "node -e \"const fs=require('fs'); ['workload/issueCertificate.js','workload/verifyCertificate.js','workload/queryAllCertificates.js','workload/revokeCertificate.js'].forEach(f=>{const m=require('./'+f);if(typeof m.createWorkloadModule!=='function'){throw new Error(f+' invalid');} console.log('✅',f)});\""
+  },
   "dependencies": {
     "@hyperledger/caliper-cli": "0.5.0",
     "fabric-network": "^2.2.12"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0"
   }
 }

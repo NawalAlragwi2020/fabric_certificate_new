@@ -16,6 +16,9 @@
 const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 
 class QueryAllCertificatesWorkload extends WorkloadModuleBase {
+    constructor() {
+        super();
+    }
 
     async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
         await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);

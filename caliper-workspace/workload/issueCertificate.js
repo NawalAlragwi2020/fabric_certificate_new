@@ -13,11 +13,15 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+'use strict';
 const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
+const crypto = require('crypto');
 
 class IssueCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
+        this.workerIndex = 0;
+        this.txIndex = 0;
     }
 
     async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
@@ -49,11 +53,10 @@ class IssueCertificateWorkload extends WorkloadModuleBase {
             readOnly:          false,
         };
 
-        await this.sutAdapter.sendRequests(args);
+        return this.sutAdapter.sendRequests(request);
     }
 }
 
-<<<<<<< HEAD
 module.exports = {
     createWorkloadModule: () => new IssueCertificateWorkload(),
 };

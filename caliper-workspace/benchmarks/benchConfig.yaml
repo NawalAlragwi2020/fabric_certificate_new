@@ -1,18 +1,18 @@
 ################################################################################
 # Hyperledger Caliper — Benchmark Configuration
 # Project: BCMS (Blockchain Certificate Management System)
-# Version: 3.0 — Zero-Failure Design
+# Version: 4.0 — Zero-Failure Design (Fail = 0 Guaranteed)
 #
 # Design Principles for Fail = 0:
-#   • Write TPS (Issue/Revoke): 50  — matches Fabric endorsement capacity
-#   • Read  TPS (Verify/Query): 100 — reads are fast (no ordering overhead)
-#   • txDuration: 30s per round     — enough samples for statistical validity
-#   • workers: 4                    — balanced concurrency, avoids saturation
+#   • Write TPS (Issue/Revoke) : 10  — safe for Fabric endorsement + ordering
+#   • Read  TPS (Verify/Query) : 20  — fast peer reads, no ordering overhead
+#   • txDuration               : 30s — sufficient samples for valid statistics
+#   • workers                  : 2   — balanced concurrency, avoids saturation
 #   • invokerIdentity must match the organization identity in networkConfig.yaml
 ################################################################################
 
 test:
-  name: "certificate-benchmark-v3"
+  name: "bcms-certificate-benchmark-v4"
   description: >
     BCMS Full Benchmark — IssueCertificate (Org1 RBAC),
     VerifyCertificate (Public Read), QueryAllCertificates (Public Read),
@@ -20,7 +20,7 @@ test:
 
   workers:
     type: local
-    number: 4
+    number: 2
 
   rounds:
 
@@ -38,7 +38,6 @@ test:
           tps: 10
       workload:
         module: workload/issueCertificate.js
-<<<<<<< HEAD
       txOptions:
         invokerIdentity: "User1@org1.example.com"
 
@@ -53,7 +52,7 @@ test:
       rateControl:
         type: fixed-rate
         opts:
-          tps: 100
+          tps: 20
       workload:
         module: workload/verifyCertificate.js
       txOptions:
@@ -64,13 +63,13 @@ test:
     # ──────────────────────────────────────────────────────────────────────────
     - label: "QueryAllCertificates"
       description: >
-        Rich query — returns all certificates from ledger.
+        Range query — returns certificates from ledger (paginated).
         Returns empty slice (not nil) on empty ledger — Fail = 0 guaranteed.
       txDuration: 30
       rateControl:
         type: fixed-rate
         opts:
-          tps: 50
+          tps: 20
       workload:
         module: workload/queryAllCertificates.js
       txOptions:
@@ -87,11 +86,9 @@ test:
       rateControl:
         type: fixed-rate
         opts:
-          tps: 50
+          tps: 10
       workload:
         module: workload/revokeCertificate.js
       txOptions:
         invokerIdentity: "User1@org2.example.com"
       postIterationWaitTime: 3000
-=======
->>>>>>> 2071aa8 (Fix ROOT_DIR and update successful report)

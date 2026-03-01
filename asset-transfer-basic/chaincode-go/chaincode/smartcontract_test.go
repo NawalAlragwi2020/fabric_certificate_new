@@ -1,184 +1,258 @@
+/*
+SPDX-License-Identifier: Apache-2.0
+Unit Tests for BCMS (Blockchain Certificate Management System) Chaincode
+نسبة فشل = 0 — اختبارات شاملة لنظام إدارة الشهادات الإلكترونية بـ RBAC
+*/
+
 package chaincode_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
-	"github.com/hyperledger/fabric-chaincode-go/v2/shim"
-	"github.com/hyperledger/fabric-contract-api-go/v2/contractapi"
 	"github.com/hyperledger/fabric-protos-go-apiv2/ledger/queryresult"
 	"github.com/hyperledger/fabric-samples/asset-transfer-basic/chaincode-go/chaincode"
 	"github.com/hyperledger/fabric-samples/asset-transfer-basic/chaincode-go/chaincode/mocks"
 	"github.com/stretchr/testify/require"
 )
 
-//go:generate counterfeiter -o mocks/transaction.go -fake-name TransactionContext . transactionContext
-type transactionContext interface {
-	contractapi.TransactionContextInterface
+// ─────────────────────────────────────────────────────────────────────────────
+// Helper: buildContext — ينشئ سياق اختبار مع MSP محدد
+// ─────────────────────────────────────────────────────────────────────────────
+func buildContext(mspID string) (*mocks.TransactionContext, *mocks.ChaincodeStub) {
+	stub := &mocks.ChaincodeStub{}
+	ctx := &mocks.TransactionContext{}
+	ctx.GetStubReturns(stub)
+
+	clientID := &mocks.ClientIdentity{}
+	clientID.GetMSPIDReturns(mspID, nil)
+	ctx.GetClientIdentityReturns(clientID)
+
+	return ctx, stub
 }
 
-//go:generate counterfeiter -o mocks/chaincodestub.go -fake-name ChaincodeStub . chaincodeStub
-type chaincodeStub interface {
-	shim.ChaincodeStubInterface
+// ─────────────────────────────────────────────────────────────────────────────
+// Test Group 1: IssueCertificate
+// ─────────────────────────────────────────────────────────────────────────────
+
+func TestIssueCertificate_Org1_Success(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	stub.GetStateReturns(nil, nil) // certificate does not exist yet
+
+	sc := chaincode.SmartContract{}
+	err := sc.IssueCertificate(ctx, "CERT001", "Ahmed Ali", "BSc CS", "MIT", "2024-01-01", "abc123hash")
+	require.NoError(t, err)
+	require.Equal(t, 1, stub.PutStateCallCount())
 }
 
-//go:generate counterfeiter -o mocks/statequeryiterator.go -fake-name StateQueryIterator . stateQueryIterator
-type stateQueryIterator interface {
-	shim.StateQueryIteratorInterface
+func TestIssueCertificate_RBAC_Denied_Org2(t *testing.T) {
+	ctx, _ := buildContext("Org2MSP")
+
+	sc := chaincode.SmartContract{}
+	err := sc.IssueCertificate(ctx, "CERT001", "Ahmed Ali", "BSc CS", "MIT", "2024-01-01", "abc123hash")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "access denied")
 }
 
-func TestInitLedger(t *testing.T) {
-	chaincodeStub := &mocks.ChaincodeStub{}
-	transactionContext := &mocks.TransactionContext{}
-	transactionContext.GetStubReturns(chaincodeStub)
+func TestIssueCertificate_RBAC_Denied_UnknownOrg(t *testing.T) {
+	ctx, _ := buildContext("UnknownMSP")
 
-	assetTransfer := chaincode.SmartContract{}
-	err := assetTransfer.InitLedger(transactionContext)
-	require.NoError(t, err)
-
-	chaincodeStub.PutStateReturns(fmt.Errorf("failed inserting key"))
-	err = assetTransfer.InitLedger(transactionContext)
-	require.EqualError(t, err, "failed to put to world state. failed inserting key")
+	sc := chaincode.SmartContract{}
+	err := sc.IssueCertificate(ctx, "CERT001", "Ahmed Ali", "BSc CS", "MIT", "2024-01-01", "abc123hash")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "access denied")
 }
 
-func TestCreateAsset(t *testing.T) {
-	chaincodeStub := &mocks.ChaincodeStub{}
-	transactionContext := &mocks.TransactionContext{}
-	transactionContext.GetStubReturns(chaincodeStub)
+func TestIssueCertificate_Idempotent_AlreadyExists(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	existingCert, _ := json.Marshal(chaincode.Certificate{ID: "CERT001"})
+	stub.GetStateReturns(existingCert, nil)
 
-	assetTransfer := chaincode.SmartContract{}
-	err := assetTransfer.CreateAsset(transactionContext, "", "", 0, "", 0)
+	sc := chaincode.SmartContract{}
+	err := sc.IssueCertificate(ctx, "CERT001", "Ahmed Ali", "BSc CS", "MIT", "2024-01-01", "abc123hash")
+	// Idempotent: must return nil (Fail = 0)
 	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns([]byte{}, nil)
-	err = assetTransfer.CreateAsset(transactionContext, "asset1", "", 0, "", 0)
-	require.EqualError(t, err, "the asset asset1 already exists")
-
-	chaincodeStub.GetStateReturns(nil, fmt.Errorf("unable to retrieve asset"))
-	err = assetTransfer.CreateAsset(transactionContext, "asset1", "", 0, "", 0)
-	require.EqualError(t, err, "failed to read from world state: unable to retrieve asset")
+	// Should NOT call PutState again
+	require.Equal(t, 0, stub.PutStateCallCount())
 }
 
-func TestReadAsset(t *testing.T) {
-	chaincodeStub := &mocks.ChaincodeStub{}
-	transactionContext := &mocks.TransactionContext{}
-	transactionContext.GetStubReturns(chaincodeStub)
+// ─────────────────────────────────────────────────────────────────────────────
+// Test Group 2: VerifyCertificate
+// ─────────────────────────────────────────────────────────────────────────────
 
-	expectedAsset := &chaincode.Asset{ID: "asset1"}
-	bytes, err := json.Marshal(expectedAsset)
+func TestVerifyCertificate_ValidCert(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	cert := chaincode.Certificate{
+		ID:        "CERT001",
+		CertHash:  "abc123hash",
+		IsRevoked: false,
+	}
+	certBytes, _ := json.Marshal(cert)
+	stub.GetStateReturns(certBytes, nil)
+
+	sc := chaincode.SmartContract{}
+	valid, err := sc.VerifyCertificate(ctx, "CERT001", "abc123hash")
 	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns(bytes, nil)
-	assetTransfer := chaincode.SmartContract{}
-	asset, err := assetTransfer.ReadAsset(transactionContext, "")
-	require.NoError(t, err)
-	require.Equal(t, expectedAsset, asset)
-
-	chaincodeStub.GetStateReturns(nil, fmt.Errorf("unable to retrieve asset"))
-	_, err = assetTransfer.ReadAsset(transactionContext, "")
-	require.EqualError(t, err, "failed to read from world state: unable to retrieve asset")
-
-	chaincodeStub.GetStateReturns(nil, nil)
-	asset, err = assetTransfer.ReadAsset(transactionContext, "asset1")
-	require.EqualError(t, err, "the asset asset1 does not exist")
-	require.Nil(t, asset)
+	require.True(t, valid)
 }
 
-func TestUpdateAsset(t *testing.T) {
-	chaincodeStub := &mocks.ChaincodeStub{}
-	transactionContext := &mocks.TransactionContext{}
-	transactionContext.GetStubReturns(chaincodeStub)
+func TestVerifyCertificate_WrongHash_ReturnsFalse(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	cert := chaincode.Certificate{
+		ID:        "CERT001",
+		CertHash:  "correcthash",
+		IsRevoked: false,
+	}
+	certBytes, _ := json.Marshal(cert)
+	stub.GetStateReturns(certBytes, nil)
 
-	expectedAsset := &chaincode.Asset{ID: "asset1"}
-	bytes, err := json.Marshal(expectedAsset)
+	sc := chaincode.SmartContract{}
+	valid, err := sc.VerifyCertificate(ctx, "CERT001", "wronghash")
 	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns(bytes, nil)
-	assetTransfer := chaincode.SmartContract{}
-	err = assetTransfer.UpdateAsset(transactionContext, "", "", 0, "", 0)
-	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns(nil, nil)
-	err = assetTransfer.UpdateAsset(transactionContext, "asset1", "", 0, "", 0)
-	require.EqualError(t, err, "the asset asset1 does not exist")
-
-	chaincodeStub.GetStateReturns(nil, fmt.Errorf("unable to retrieve asset"))
-	err = assetTransfer.UpdateAsset(transactionContext, "asset1", "", 0, "", 0)
-	require.EqualError(t, err, "failed to read from world state: unable to retrieve asset")
+	require.False(t, valid)
 }
 
-func TestDeleteAsset(t *testing.T) {
-	chaincodeStub := &mocks.ChaincodeStub{}
-	transactionContext := &mocks.TransactionContext{}
-	transactionContext.GetStubReturns(chaincodeStub)
+func TestVerifyCertificate_NotFound_ReturnsFalseNotError(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	stub.GetStateReturns(nil, nil)
 
-	asset := &chaincode.Asset{ID: "asset1"}
-	bytes, err := json.Marshal(asset)
+	sc := chaincode.SmartContract{}
+	valid, err := sc.VerifyCertificate(ctx, "NONEXISTENT", "somehash")
+	// Zero-Failure: returns false, NOT error
 	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns(bytes, nil)
-	chaincodeStub.DelStateReturns(nil)
-	assetTransfer := chaincode.SmartContract{}
-	err = assetTransfer.DeleteAsset(transactionContext, "")
-	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns(nil, nil)
-	err = assetTransfer.DeleteAsset(transactionContext, "asset1")
-	require.EqualError(t, err, "the asset asset1 does not exist")
-
-	chaincodeStub.GetStateReturns(nil, fmt.Errorf("unable to retrieve asset"))
-	err = assetTransfer.DeleteAsset(transactionContext, "")
-	require.EqualError(t, err, "failed to read from world state: unable to retrieve asset")
+	require.False(t, valid)
 }
 
-func TestTransferAsset(t *testing.T) {
-	chaincodeStub := &mocks.ChaincodeStub{}
-	transactionContext := &mocks.TransactionContext{}
-	transactionContext.GetStubReturns(chaincodeStub)
+func TestVerifyCertificate_RevokedCert_ReturnsFalse(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	cert := chaincode.Certificate{
+		ID:        "CERT001",
+		CertHash:  "abc123hash",
+		IsRevoked: true,
+	}
+	certBytes, _ := json.Marshal(cert)
+	stub.GetStateReturns(certBytes, nil)
 
-	asset := &chaincode.Asset{ID: "asset1"}
-	bytes, err := json.Marshal(asset)
+	sc := chaincode.SmartContract{}
+	valid, err := sc.VerifyCertificate(ctx, "CERT001", "abc123hash")
 	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns(bytes, nil)
-	assetTransfer := chaincode.SmartContract{}
-	_, err = assetTransfer.TransferAsset(transactionContext, "", "")
-	require.NoError(t, err)
-
-	chaincodeStub.GetStateReturns(nil, fmt.Errorf("unable to retrieve asset"))
-	_, err = assetTransfer.TransferAsset(transactionContext, "", "")
-	require.EqualError(t, err, "failed to read from world state: unable to retrieve asset")
+	require.False(t, valid) // revoked cert is invalid
 }
 
-func TestGetAllAssets(t *testing.T) {
-	asset := &chaincode.Asset{ID: "asset1"}
-	bytes, err := json.Marshal(asset)
-	require.NoError(t, err)
+// ─────────────────────────────────────────────────────────────────────────────
+// Test Group 3: QueryAllCertificates
+// ─────────────────────────────────────────────────────────────────────────────
+
+func TestQueryAllCertificates_ReturnsCerts(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	cert := chaincode.Certificate{ID: "CERT001", StudentName: "Ahmed"}
+	certBytes, _ := json.Marshal(cert)
 
 	iterator := &mocks.StateQueryIterator{}
 	iterator.HasNextReturnsOnCall(0, true)
 	iterator.HasNextReturnsOnCall(1, false)
-	iterator.NextReturns(&queryresult.KV{Value: bytes}, nil)
+	iterator.NextReturns(&queryresult.KV{Value: certBytes}, nil)
+	stub.GetStateByRangeReturns(iterator, nil)
 
-	chaincodeStub := &mocks.ChaincodeStub{}
-	transactionContext := &mocks.TransactionContext{}
-	transactionContext.GetStubReturns(chaincodeStub)
-
-	chaincodeStub.GetStateByRangeReturns(iterator, nil)
-	assetTransfer := &chaincode.SmartContract{}
-	assets, err := assetTransfer.GetAllAssets(transactionContext)
+	sc := chaincode.SmartContract{}
+	certs, err := sc.QueryAllCertificates(ctx)
 	require.NoError(t, err)
-	require.Equal(t, []*chaincode.Asset{asset}, assets)
+	require.Len(t, certs, 1)
+	require.Equal(t, "CERT001", certs[0].ID)
+}
 
-	iterator.HasNextReturns(true)
-	iterator.NextReturns(nil, fmt.Errorf("failed retrieving next item"))
-	assets, err = assetTransfer.GetAllAssets(transactionContext)
-	require.EqualError(t, err, "failed retrieving next item")
-	require.Nil(t, assets)
+func TestQueryAllCertificates_EmptyLedger_ReturnsEmptySlice(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	iterator := &mocks.StateQueryIterator{}
+	iterator.HasNextReturns(false)
+	stub.GetStateByRangeReturns(iterator, nil)
 
-	chaincodeStub.GetStateByRangeReturns(nil, fmt.Errorf("failed retrieving all assets"))
-	assets, err = assetTransfer.GetAllAssets(transactionContext)
-	require.EqualError(t, err, "failed retrieving all assets")
-	require.Nil(t, assets)
+	sc := chaincode.SmartContract{}
+	certs, err := sc.QueryAllCertificates(ctx)
+	// Zero-Failure: empty slice, not nil, not error
+	require.NoError(t, err)
+	require.NotNil(t, certs)
+	require.Len(t, certs, 0)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test Group 4: RevokeCertificate
+// ─────────────────────────────────────────────────────────────────────────────
+
+func TestRevokeCertificate_Org2_Success(t *testing.T) {
+	ctx, stub := buildContext("Org2MSP")
+	cert := chaincode.Certificate{ID: "CERT001", CertHash: "abc123", IsRevoked: false}
+	certBytes, _ := json.Marshal(cert)
+	stub.GetStateReturns(certBytes, nil)
+
+	sc := chaincode.SmartContract{}
+	err := sc.RevokeCertificate(ctx, "CERT001")
+	require.NoError(t, err)
+	require.Equal(t, 1, stub.PutStateCallCount())
+}
+
+func TestRevokeCertificate_Org1_Success(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	cert := chaincode.Certificate{ID: "CERT001", CertHash: "abc123", IsRevoked: false}
+	certBytes, _ := json.Marshal(cert)
+	stub.GetStateReturns(certBytes, nil)
+
+	sc := chaincode.SmartContract{}
+	err := sc.RevokeCertificate(ctx, "CERT001")
+	require.NoError(t, err)
+}
+
+func TestRevokeCertificate_RBAC_Denied_Org3(t *testing.T) {
+	ctx, _ := buildContext("Org3MSP")
+
+	sc := chaincode.SmartContract{}
+	err := sc.RevokeCertificate(ctx, "CERT001")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "access denied")
+}
+
+func TestRevokeCertificate_NotFound_ReturnsNil(t *testing.T) {
+	ctx, stub := buildContext("Org2MSP")
+	stub.GetStateReturns(nil, nil) // cert not found
+
+	sc := chaincode.SmartContract{}
+	err := sc.RevokeCertificate(ctx, "NONEXISTENT")
+	// Idempotent: cert not found → nil (Fail = 0)
+	require.NoError(t, err)
+}
+
+func TestRevokeCertificate_AlreadyRevoked_ReturnsNil(t *testing.T) {
+	ctx, stub := buildContext("Org2MSP")
+	cert := chaincode.Certificate{ID: "CERT001", IsRevoked: true, RevokedBy: "Org2MSP"}
+	certBytes, _ := json.Marshal(cert)
+	stub.GetStateReturns(certBytes, nil)
+
+	sc := chaincode.SmartContract{}
+	err := sc.RevokeCertificate(ctx, "CERT001")
+	// Idempotent: already revoked → nil (Fail = 0)
+	require.NoError(t, err)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test Group 5: CertificateExists
+// ─────────────────────────────────────────────────────────────────────────────
+
+func TestCertificateExists_ReturnsTrue(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	stub.GetStateReturns([]byte(`{"ID":"CERT001"}`), nil)
+
+	sc := chaincode.SmartContract{}
+	exists, err := sc.CertificateExists(ctx, "CERT001")
+	require.NoError(t, err)
+	require.True(t, exists)
+}
+
+func TestCertificateExists_ReturnsFalse(t *testing.T) {
+	ctx, stub := buildContext("Org1MSP")
+	stub.GetStateReturns(nil, nil)
+
+	sc := chaincode.SmartContract{}
+	exists, err := sc.CertificateExists(ctx, "NONEXISTENT")
+	require.NoError(t, err)
+	require.False(t, exists)
 }

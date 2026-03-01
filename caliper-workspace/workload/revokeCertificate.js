@@ -18,6 +18,7 @@ const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 class RevokeCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
+        this.workerIndex = 0;
         this.txIndex = 0;
     }
 

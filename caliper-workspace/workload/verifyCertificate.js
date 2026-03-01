@@ -19,6 +19,7 @@ const crypto = require('crypto');
 class VerifyCertificateWorkload extends WorkloadModuleBase {
     constructor() {
         super();
+        this.workerIndex = 0;
         this.txIndex = 0;
     }
 
