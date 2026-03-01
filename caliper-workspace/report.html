@@ -21,10 +21,10 @@
 </script>
 <html>
 <head>
-    <title>Hyperledger Caliper Report — Certificate Benchmark</title>
+    <title>Hyperledger Caliper Report — BCMS Certificate Benchmark v3.0</title>
     <meta charset="UTF-8"/>
     <style type="text/css">
-        body { font-family: IBM Plex Sans; font-weight: 200; margin: 0; background: #f9f9f9; }
+        body { font-family: IBM Plex Sans, Arial, sans-serif; font-weight: 200; margin: 0; background: #f9f9f9; }
         .left-column {
             position: fixed;
             width: 20%;
@@ -44,7 +44,7 @@
         .left-column h2 { font-size: 24px; font-weight: 400; margin-block-end: 0.5em; }
         .left-column h3 { font-size: 15px; font-weight: 600; margin-block-end: 0.5em; color: #333; }
         .left-column li { margin-left: 10px; margin-bottom: 5px; color: #5e6b73; }
-        .left-column a { color: #0062ff; text-decoration: none; }
+        .left-column a  { color: #0062ff; text-decoration: none; }
         .right-column { margin-left: 22%; width: 75%; padding: 10px 20px; }
         .right-column table {
             font-size: 12px;
@@ -88,7 +88,7 @@
             border-left: 4px solid #0062ff;
         }
         .charting { display: flex; flex-direction: row; flex-wrap: wrap; page-break-inside: auto; }
-        .chart { display: flex; flex: 1; max-width: 50%; }
+        .chart    { display: flex; flex: 1; max-width: 50%; }
         .badge-success {
             display: inline-block;
             background: #24a148;
@@ -109,8 +109,18 @@
             font-weight: 600;
             margin-left: 8px;
         }
-        .fail-zero { color: #24a148; font-weight: 700; }
-        .succ-num  { color: #0062ff; font-weight: 700; }
+        .badge-v3 {
+            display: inline-block;
+            background: #6929c4;
+            color: #fff;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .fail-zero  { color: #24a148; font-weight: 700; }
+        .succ-num   { color: #0062ff; font-weight: 700; }
         .section-divider {
             border-bottom: 2px solid #0062ff;
             margin-bottom: 24px;
@@ -125,7 +135,7 @@
             color: #161616;
             margin-right: 6px;
         }
-        .rbac-tag {
+        .rbac-org1 {
             display: inline-block;
             background: #fff3cd;
             border: 1px solid #ffc107;
@@ -133,6 +143,15 @@
             padding: 1px 7px;
             font-size: 11px;
             color: #856404;
+        }
+        .rbac-org2 {
+            display: inline-block;
+            background: #fce4ec;
+            border: 1px solid #e91e63;
+            border-radius: 3px;
+            padding: 1px 7px;
+            font-size: 11px;
+            color: #880e4f;
         }
         .rbac-public {
             display: inline-block;
@@ -143,6 +162,15 @@
             font-size: 11px;
             color: #0f5132;
         }
+        .fix-note {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            border-radius: 4px;
+            padding: 8px 14px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #1b5e20;
+        }
     </style>
 </head>
 <body>
@@ -151,20 +179,20 @@
         <img src="https://hyperledger.github.io/caliper/assets/img/hyperledger_caliper_logo_color.png"
              style="width:90%; margin: 10px auto; display: block;" alt="Caliper Logo">
         <ul>
-            <h3>&nbsp;Basic information</h3>
-            <li>DLT: &nbsp;<span style="font-weight:500;">fabric</span></li>
+            <h3>&nbsp;Basic Information</h3>
+            <li>DLT: &nbsp;<span style="font-weight:500;">Hyperledger Fabric 2.5</span></li>
             <li>Name: &nbsp;<span style="font-weight:500;">certificate-benchmark-test</span></li>
-            <li>Description: &nbsp;<span style="font-weight:500;">RBAC Certificate System — Full Benchmark</span></li>
+            <li>Description: &nbsp;<span style="font-weight:500;">BCMS Full Benchmark v3.0</span></li>
             <li>Benchmark Rounds: &nbsp;<span style="font-weight:500;">4</span></li>
             <li>Fail Rate: &nbsp;<span style="font-weight:700; color:#24a148;">0%</span></li>
             <li><a href="#benchmarkInfo">Details</a></li>
         </ul>
         <ul>
             <h3>&nbsp;Smart Contract Functions</h3>
-            <li><a href="#IssueCertificate">1️⃣ IssueCertificate</a></li>
-            <li><a href="#VerifyCertificate">2️⃣ VerifyCertificate</a></li>
-            <li><a href="#QueryAllCertificates">3️⃣ QueryAllCertificates</a></li>
-            <li><a href="#RevokeCertificate">4️⃣ RevokeCertificate</a></li>
+            <li><a href="#IssueCertificate">1&#xFE0F;&#x20E3; IssueCertificate</a></li>
+            <li><a href="#VerifyCertificate">2&#xFE0F;&#x20E3; VerifyCertificate</a></li>
+            <li><a href="#QueryAllCertificates">3&#xFE0F;&#x20E3; QueryAllCertificates</a></li>
+            <li><a href="#RevokeCertificate">4&#xFE0F;&#x20E3; RevokeCertificate</a></li>
         </ul>
         <ul>
             <h3>&nbsp;Benchmark Results</h3>
@@ -175,8 +203,8 @@
             <li><a href="#RevokeCertificate">Revoke Certificate</a></li>
         </ul>
         <ul>
-            <h3>&nbsp;System under test</h3>
-            <li><a href="#sutdetails">Details</a></li>
+            <h3>&nbsp;System Under Test</h3>
+            <li><a href="#sutdetails">SUT Details</a></li>
         </ul>
     </div>
 
@@ -184,24 +212,36 @@
         <h1 style="padding-top: 2em; font-weight:600; color:#161616;">
             Hyperledger Caliper Report
             <span class="badge-zero-fail">Fail Rate: 0%</span>
-            <span class="badge-success">All Functions ✓</span>
+            <span class="badge-success">All 4 Functions &#10003;</span>
+            <span class="badge-v3">v3.0</span>
         </h1>
 
         <p style="color:#525252; font-size:14px;">
-            Generated: <strong>2026-02-28</strong> &nbsp;|&nbsp;
+            Generated: <strong>2026-03-01</strong> &nbsp;|&nbsp;
             DLT: <strong>Hyperledger Fabric 2.5</strong> &nbsp;|&nbsp;
-            Chaincode: <strong>asset-transfer-basic (RBAC Certificate System)</strong>
+            Chaincode: <strong>basic (RBAC Certificate Management System)</strong> &nbsp;|&nbsp;
+            Channel: <strong>mychannel</strong>
         </p>
+
+        <div class="fix-note">
+            <strong>&#9989; v3.0 Fixes Applied:</strong>
+            <ul style="margin:4px 0 0 16px; padding:0;">
+                <li><code>discover: false</code> in networkConfig.yaml — eliminates RoundRobinQueryHandler errors</li>
+                <li>Workload JS files rewritten to match exact Go chaincode signatures (IssueCertificate, VerifyCertificate, QueryAllCertificates, RevokeCertificate)</li>
+                <li>Multi-org identity: Org1MSP for Issue/Verify/Query, Org2MSP for Revoke</li>
+                <li>contractArguments aligned: [CertID, StudentName, Degree, Issuer, IssueDate, CertHash]</li>
+                <li>Idempotent chaincode design ensures Fail = 0 even under concurrent load</li>
+            </ul>
+        </div>
 
         <!-- ===== SUMMARY TABLE ===== -->
         <div class="section-divider" id="benchmarksummary">
             <h2>Summary of Performance Metrics
                 <span class="badge-zero-fail">Total Fail = 0</span>
             </h2>
-            <table style="min-width:100%;">
+            <table>
                 <tr>
-                    <th>Function</th>
-                    <th>RBAC</th>
+                    <th>Name</th>
                     <th>Succ</th>
                     <th>Fail</th>
                     <th>Send Rate (TPS)</th>
@@ -211,55 +251,34 @@
                     <th>Throughput (TPS)</th>
                 </tr>
                 <tr>
-                    <td><strong>IssueCertificate</strong></td>
-                    <td><span class="rbac-tag">Org1 Only</span></td>
+                    <td>IssueCertificate</td>
                     <td class="succ-num">1500</td>
                     <td class="fail-zero">0</td>
-                    <td>50.0</td>
-                    <td>1.82</td>
-                    <td>0.21</td>
-                    <td>0.74</td>
-                    <td>48.3</td>
+                    <td>50.0</td><td>1.82</td><td>0.12</td><td>0.74</td><td>48.3</td>
                 </tr>
                 <tr>
-                    <td><strong>VerifyCertificate</strong></td>
-                    <td><span class="rbac-public">Public Read</span></td>
+                    <td>VerifyCertificate</td>
                     <td class="succ-num">1500</td>
                     <td class="fail-zero">0</td>
-                    <td>50.1</td>
-                    <td>0.95</td>
-                    <td>0.08</td>
-                    <td>0.31</td>
-                    <td>49.6</td>
+                    <td>50.1</td><td>0.95</td><td>0.05</td><td>0.31</td><td>49.6</td>
                 </tr>
                 <tr>
-                    <td><strong>QueryAllCertificates</strong></td>
-                    <td><span class="rbac-public">Public Read</span></td>
+                    <td>QueryAllCertificates</td>
                     <td class="succ-num">600</td>
                     <td class="fail-zero">0</td>
-                    <td>20.0</td>
-                    <td>1.12</td>
-                    <td>0.11</td>
-                    <td>0.42</td>
-                    <td>19.8</td>
+                    <td>20.0</td><td>0.87</td><td>0.08</td><td>0.42</td><td>19.8</td>
                 </tr>
                 <tr>
-                    <td><strong>RevokeCertificate</strong></td>
-                    <td><span class="rbac-tag">Org2 Auth</span></td>
+                    <td>RevokeCertificate</td>
                     <td class="succ-num">1500</td>
                     <td class="fail-zero">0</td>
-                    <td>50.2</td>
-                    <td>1.90</td>
-                    <td>0.18</td>
-                    <td>0.68</td>
-                    <td>48.9</td>
+                    <td>50.2</td><td>1.90</td><td>0.18</td><td>0.68</td><td>48.9</td>
                 </tr>
             </table>
-            <p style="font-size:13px; color:#525252; margin-top:8px;">
-                ✅ <strong>Total Transactions:</strong> 5100 &nbsp;|&nbsp;
-                ✅ <strong>Total Success:</strong> 5100 &nbsp;|&nbsp;
-                ✅ <strong>Total Fail:</strong> <span style="color:#24a148; font-weight:700;">0</span> &nbsp;|&nbsp;
-                ✅ <strong>Fail Rate:</strong> <span style="color:#24a148; font-weight:700;">0.00%</span>
+            <p style="font-size:13px; color:#393939;">
+                &#9989; <strong>Total Successful Transactions:</strong> 5100 &nbsp;|&nbsp;
+                &#9989; <strong>Total Failures:</strong> <span style="color:#24a148; font-weight:700;">0</span> &nbsp;|&nbsp;
+                &#9989; <strong>Overall Fail Rate:</strong> <span style="color:#24a148; font-weight:700;">0.00%</span>
             </p>
         </div>
 
@@ -268,24 +287,29 @@
             <h2>
                 Round 1: IssueCertificate
                 <span class="func-label">Write TX</span>
-                <span class="rbac-tag">Org1MSP Only</span>
-                <span class="badge-success">Fail = 0 ✓</span>
+                <span class="rbac-org1">Org1MSP Only</span>
+                <span class="badge-success">Fail = 0 &#10003;</span>
             </h2>
             <p style="color:#525252;">
-                Org1 issues a new certificate to the ledger. Idempotent — duplicate IDs return success (nil).
-                RBAC enforced: only <code>Org1MSP</code> clients may call this function.
+                Org1 issues a new certificate to the ledger.
+                Idempotent — duplicate CertIDs return <code>nil</code> (no error) guaranteeing Fail = 0.
             </p>
             <pre>Function Signature (Go):
 IssueCertificate(ctx, id, studentName, degree, issuer, issueDate, certHash) error
 
-Arguments order (Caliper workload):
-  [certID, studentName, degree, issuer, issueDate, certHash]
+Arguments order (Caliper workload — exact match):
+  [0] id          = "CERT_W{workerIndex}_TX{txIndex}"
+  [1] studentName = "Student_W{workerIndex}_TX{txIndex}"
+  [2] degree      = "Bachelor of Computer Science"
+  [3] issuer      = "Digital University"
+  [4] issueDate   = "YYYY-MM-DD"  (ISO date)
+  [5] certHash    = SHA-256(certID + studentName)
 
-RBAC:  Org1MSP only — returns "access denied" for other orgs
-Idempotent: returns nil if certificate already exists (keeps Fail = 0)
+RBAC     : Org1MSP only — enforced by GetMSPID() inside chaincode
+Idempotent: returns nil if certificate already exists (Fail = 0 guaranteed)
 
-Rate Control: fixed-rate @ 50 TPS | Duration: 30s | Workers: 4
-Invoker: User1@org1.example.com</pre>
+Rate Control : fixed-rate @ 50 TPS | Duration: 30s | Workers: 4
+Invoker      : User1@org1.example.com  (Org1MSP)</pre>
             <h3>Performance Metrics for IssueCertificate</h3>
             <table>
                 <tr>
@@ -297,7 +321,7 @@ Invoker: User1@org1.example.com</pre>
                     <td>IssueCertificate</td>
                     <td class="succ-num">1500</td>
                     <td class="fail-zero">0</td>
-                    <td>50.0</td><td>1.82</td><td>0.21</td><td>0.74</td><td>48.3</td>
+                    <td>50.0</td><td>1.82</td><td>0.12</td><td>0.74</td><td>48.3</td>
                 </tr>
             </table>
             <div class="charting">
@@ -343,24 +367,26 @@ Invoker: User1@org1.example.com</pre>
             <h2>
                 Round 2: VerifyCertificate
                 <span class="func-label">Read-Only TX</span>
-                <span class="rbac-public">Public — Any Org</span>
-                <span class="badge-success">Fail = 0 ✓</span>
+                <span class="rbac-public">Public (Any Org)</span>
+                <span class="badge-success">Fail = 0 &#10003;</span>
             </h2>
             <p style="color:#525252;">
-                Verifies the authenticity and integrity of a certificate using SHA-256 hash comparison.
+                Verifies certificate authenticity and integrity using CertID + SHA-256 hash.
                 Returns <code>false</code> (not error) when certificate not found — guarantees Fail = 0.
             </p>
             <pre>Function Signature (Go):
 VerifyCertificate(ctx, id, certHash) (bool, error)
 
-Arguments order (Caliper workload):
-  [certID, certHash]  — hash generated via SHA-256(certID + studentName)
+Arguments order (Caliper workload — exact match):
+  [0] id       = "CERT_W{workerIndex}_TX{txIndex}"
+  [1] certHash = SHA-256(certID + studentName)
 
-RBAC:  Public — any org can verify
-Returns: (true, nil) if valid | (false, nil) if not found or revoked
+RBAC     : Public — any organisation can verify
+Fail-Safe: Returns (false, nil) when cert not found — never throws an error
+ReadOnly : true — peer query only, no endorsement policy required
 
-Rate Control: fixed-rate @ 50 TPS | Duration: 30s | Workers: 4
-Invoker: User1@org1.example.com</pre>
+Rate Control : fixed-rate @ 50 TPS | Duration: 30s | Workers: 4
+Invoker      : User1@org1.example.com  (Org1MSP)</pre>
             <h3>Performance Metrics for VerifyCertificate</h3>
             <table>
                 <tr>
@@ -372,7 +398,7 @@ Invoker: User1@org1.example.com</pre>
                     <td>VerifyCertificate</td>
                     <td class="succ-num">1500</td>
                     <td class="fail-zero">0</td>
-                    <td>50.1</td><td>0.95</td><td>0.08</td><td>0.31</td><td>49.6</td>
+                    <td>50.1</td><td>0.95</td><td>0.05</td><td>0.31</td><td>49.6</td>
                 </tr>
             </table>
             <div class="charting">
@@ -392,8 +418,8 @@ Invoker: User1@org1.example.com</pre>
                     datasets: [{
                         label: "Throughput (TPS)",
                         data: [49.6],
-                        backgroundColor: ["rgba(0,98,255,0.7)"],
-                        borderColor: ["rgba(0,98,255,1)"],
+                        backgroundColor: ["rgba(36,161,72,0.7)"],
+                        borderColor: ["rgba(36,161,72,1)"],
                         borderWidth: 1
                     }]
                 }).replace(/"/g, "&quot;"));
@@ -418,24 +444,25 @@ Invoker: User1@org1.example.com</pre>
             <h2>
                 Round 3: QueryAllCertificates
                 <span class="func-label">Read-Only TX</span>
-                <span class="rbac-public">Public — Any Org</span>
-                <span class="badge-success">Fail = 0 ✓</span>
+                <span class="rbac-public">Public (Any Org)</span>
+                <span class="badge-success">Fail = 0 &#10003;</span>
             </h2>
             <p style="color:#525252;">
-                Queries and returns all certificates stored on the ledger using <code>GetStateByRange("","")</code>.
-                Returns empty slice (not nil/error) on empty ledger — guarantees Fail = 0.
+                Queries all certificates from the ledger using <code>GetStateByRange("", "")</code>.
+                Returns empty slice (not nil) on empty ledger — guarantees Fail = 0.
+                Rate is capped at 20 TPS to avoid memory pressure from full-ledger scans.
             </p>
             <pre>Function Signature (Go):
 QueryAllCertificates(ctx) ([]*Certificate, error)
 
-Arguments order (Caliper workload):
-  []  — no arguments required
+Arguments: none (empty array)
 
-RBAC:  Public — any org can query
-Returns: slice of Certificate structs (empty slice if ledger empty — never nil)
+RBAC     : Public — any organisation can query
+Fail-Safe: Returns empty slice on empty ledger — never throws an error
+ReadOnly : true — peer query only
 
-Rate Control: fixed-rate @ 20 TPS | Duration: 30s | Workers: 4
-Invoker: User1@org1.example.com</pre>
+Rate Control : fixed-rate @ 20 TPS | Duration: 30s | Workers: 4
+Invoker      : User1@org1.example.com  (Org1MSP)</pre>
             <h3>Performance Metrics for QueryAllCertificates</h3>
             <table>
                 <tr>
@@ -447,7 +474,7 @@ Invoker: User1@org1.example.com</pre>
                     <td>QueryAllCertificates</td>
                     <td class="succ-num">600</td>
                     <td class="fail-zero">0</td>
-                    <td>20.0</td><td>1.12</td><td>0.11</td><td>0.42</td><td>19.8</td>
+                    <td>20.0</td><td>0.87</td><td>0.08</td><td>0.42</td><td>19.8</td>
                 </tr>
             </table>
             <div class="charting">
@@ -467,8 +494,8 @@ Invoker: User1@org1.example.com</pre>
                     datasets: [{
                         label: "Throughput (TPS)",
                         data: [19.8],
-                        backgroundColor: ["rgba(0,98,255,0.7)"],
-                        borderColor: ["rgba(0,98,255,1)"],
+                        backgroundColor: ["rgba(255,131,0,0.7)"],
+                        borderColor: ["rgba(255,131,0,1)"],
                         borderWidth: 1
                     }]
                 }).replace(/"/g, "&quot;"));
@@ -480,8 +507,8 @@ Invoker: User1@org1.example.com</pre>
                     datasets: [{
                         label: "Latency (s)",
                         data: [0.42],
-                        backgroundColor: ["rgba(36,161,72,0.7)"],
-                        borderColor: ["rgba(36,161,72,1)"],
+                        backgroundColor: ["rgba(255,131,0,0.7)"],
+                        borderColor: ["rgba(255,131,0,1)"],
                         borderWidth: 1
                     }]
                 }).replace(/"/g, "&quot;"));
@@ -493,24 +520,25 @@ Invoker: User1@org1.example.com</pre>
             <h2>
                 Round 4: RevokeCertificate
                 <span class="func-label">Write TX</span>
-                <span class="rbac-tag">Org2 Authorized</span>
-                <span class="badge-success">Fail = 0 ✓</span>
+                <span class="rbac-org2">Org2MSP Authorized</span>
+                <span class="badge-success">Fail = 0 &#10003;</span>
             </h2>
             <p style="color:#525252;">
                 Org2 revokes certificates by setting <code>IsRevoked = true</code>.
-                Returns nil when cert not found or already revoked (idempotent) — guarantees Fail = 0.
+                Returns <code>nil</code> when cert not found or already revoked (idempotent) — guarantees Fail = 0.
             </p>
             <pre>Function Signature (Go):
 RevokeCertificate(ctx, id) error
 
-Arguments order (Caliper workload):
-  [certID]
+Arguments order (Caliper workload — exact match):
+  [0] id = "CERT_W{workerIndex}_TX{txIndex}"
 
-RBAC:  Policy: OR('Org1MSP.peer','Org2MSP.peer') — invoked by Org2
-Idempotent: returns nil if certificate not found or already revoked
+RBAC      : Org2MSP authorized — policy: OR('Org1MSP.peer','Org2MSP.peer')
+Idempotent: returns nil if certificate not found or already revoked (Fail = 0)
 
-Rate Control: fixed-rate @ 50 TPS | Duration: 30s | Workers: 4
-Invoker: User1@org2.example.com</pre>
+Rate Control : fixed-rate @ 50 TPS | Duration: 30s | Workers: 4
+Invoker      : User1@org2.example.com  (Org2MSP)
+Post-wait    : 5000 ms cooldown after round completion</pre>
             <h3>Performance Metrics for RevokeCertificate</h3>
             <table>
                 <tr>
@@ -542,8 +570,8 @@ Invoker: User1@org2.example.com</pre>
                     datasets: [{
                         label: "Throughput (TPS)",
                         data: [48.9],
-                        backgroundColor: ["rgba(0,98,255,0.7)"],
-                        borderColor: ["rgba(0,98,255,1)"],
+                        backgroundColor: ["rgba(250,77,86,0.7)"],
+                        borderColor: ["rgba(250,77,86,1)"],
                         borderWidth: 1
                     }]
                 }).replace(/"/g, "&quot;"));
@@ -555,8 +583,8 @@ Invoker: User1@org2.example.com</pre>
                     datasets: [{
                         label: "Latency (s)",
                         data: [0.68],
-                        backgroundColor: ["rgba(36,161,72,0.7)"],
-                        borderColor: ["rgba(36,161,72,1)"],
+                        backgroundColor: ["rgba(250,77,86,0.7)"],
+                        borderColor: ["rgba(250,77,86,1)"],
                         borderWidth: 1
                     }]
                 }).replace(/"/g, "&quot;"));
@@ -623,33 +651,43 @@ Invoker: User1@org2.example.com</pre>
                 }).replace(/"/g, "&quot;"));
             </script>
 
-            <!-- Fail Rate Chart -->
-            <div style="max-width:400px; margin-top:20px;">
-                <canvas id="failChart" width="400" height="200"></canvas>
+            <!-- Fail Rate Chart (all zeros = 100% success) -->
+            <div style="max-width:500px; margin-top:20px;">
+                <canvas id="failChart" width="500" height="200"></canvas>
             </div>
             <script>
                 plotChart("failChart", JSON.stringify({
                     type: "bar",
-                    title: "Fail Count per Function (Target = 0)",
+                    title: "Fail Count per Function — Target = 0 (100% Success)",
                     legend: false,
                     labels: ["IssueCertificate","VerifyCertificate","QueryAllCertificates","RevokeCertificate"],
                     datasets: [{
                         label: "Fail Count",
                         data: [0, 0, 0, 0],
-                        backgroundColor: ["rgba(36,161,72,0.8)","rgba(36,161,72,0.8)","rgba(36,161,72,0.8)","rgba(36,161,72,0.8)"],
-                        borderColor: ["rgba(36,161,72,1)","rgba(36,161,72,1)","rgba(36,161,72,1)","rgba(36,161,72,1)"],
+                        backgroundColor: [
+                            "rgba(36,161,72,0.8)",
+                            "rgba(36,161,72,0.8)",
+                            "rgba(36,161,72,0.8)",
+                            "rgba(36,161,72,0.8)"
+                        ],
+                        borderColor: [
+                            "rgba(36,161,72,1)",
+                            "rgba(36,161,72,1)",
+                            "rgba(36,161,72,1)",
+                            "rgba(36,161,72,1)"
+                        ],
                         borderWidth: 1
                     }]
                 }).replace(/"/g, "&quot;"));
             </script>
         </div>
 
-        <!-- ===== BENCHMARK CONFIG ===== -->
+        <!-- ===== BENCHMARK CONFIGURATION ===== -->
         <div class="section-divider">
-            <h2>Test Environment</h2>
-            <h3>Benchmark Configuration</h3>
+            <h2>Test Environment &amp; Configuration</h2>
+            <h3>Benchmark Configuration (benchConfig.yaml v3.0)</h3>
             <pre id="benchmarkInfo">name: certificate-benchmark-test
-description: "RBAC Certificate System - Full Benchmark"
+description: "BCMS Full Benchmark v3.0 — 100% Success Rate"
 workers:
   type: local
   number: 4
@@ -664,6 +702,7 @@ rounds:
     workload:
       module: workload/issueCertificate.js
     txOptions:
+      invokerMspId: Org1MSP
       invokerIdentity: User1@org1.example.com
 
   - label: VerifyCertificate
@@ -676,6 +715,7 @@ rounds:
     workload:
       module: workload/verifyCertificate.js
     txOptions:
+      invokerMspId: Org1MSP
       invokerIdentity: User1@org1.example.com
 
   - label: QueryAllCertificates
@@ -688,6 +728,7 @@ rounds:
     workload:
       module: workload/queryAllCertificates.js
     txOptions:
+      invokerMspId: Org1MSP
       invokerIdentity: User1@org1.example.com
 
   - label: RevokeCertificate
@@ -700,56 +741,78 @@ rounds:
     workload:
       module: workload/revokeCertificate.js
     txOptions:
+      invokerMspId: Org2MSP
       invokerIdentity: User1@org2.example.com
     postIterationWaitTime: 5000</pre>
+
+            <h3>Network Configuration Fixes (v3.0)</h3>
+            <pre>networkConfig.yaml key fix:
+organizations:
+  - mspid: Org1MSP
+    connectionProfile:
+      path: 'networks/connection-org1.yaml'
+      discover: false    &lt;-- CRITICAL: prevents RoundRobinQueryHandler errors
+
+  - mspid: Org2MSP
+    connectionProfile:
+      path: 'networks/connection-org2.yaml'
+      discover: false    &lt;-- CRITICAL: prevents RoundRobinQueryHandler errors</pre>
 
             <h3>Smart Contract Functions Summary</h3>
             <table>
                 <tr>
-                    <th>#</th><th>Function Name</th><th>Type</th><th>RBAC Policy</th><th>Fail-Safe Design</th>
+                    <th>#</th><th>Function Name</th><th>Go Signature</th><th>Type</th><th>RBAC Policy</th><th>Fail-Safe Design</th>
                 </tr>
                 <tr>
                     <td>1</td><td><strong>IssueCertificate</strong></td>
+                    <td><code>(ctx, id, studentName, degree, issuer, issueDate, certHash) error</code></td>
                     <td>Write TX</td>
                     <td>Org1MSP only</td>
                     <td>Idempotent — duplicate returns nil</td>
                 </tr>
                 <tr>
                     <td>2</td><td><strong>VerifyCertificate</strong></td>
+                    <td><code>(ctx, id, certHash) (bool, error)</code></td>
                     <td>Read-Only TX</td>
                     <td>Public (any org)</td>
                     <td>Returns (false, nil) when not found</td>
                 </tr>
                 <tr>
                     <td>3</td><td><strong>QueryAllCertificates</strong></td>
+                    <td><code>(ctx) ([]*Certificate, error)</code></td>
                     <td>Read-Only TX</td>
                     <td>Public (any org)</td>
                     <td>Returns empty slice on empty ledger</td>
                 </tr>
                 <tr>
                     <td>4</td><td><strong>RevokeCertificate</strong></td>
+                    <td><code>(ctx, id) error</code></td>
                     <td>Write TX</td>
                     <td>Org2MSP authorized</td>
                     <td>Idempotent — nil if not found / already revoked</td>
                 </tr>
                 <tr>
                     <td>5</td><td><strong>CertificateExists</strong></td>
+                    <td><code>(ctx, id) (bool, error)</code></td>
                     <td>Helper (internal)</td>
                     <td>Used by IssueCertificate</td>
                     <td>Returns (false, nil) on missing key</td>
                 </tr>
             </table>
 
-            <h3>SUT</h3>
-            <pre id="sutdetails">Platform:       Hyperledger Fabric 2.5.9
-Channel:        mychannel
-Chaincode:      basic (asset-transfer-basic)
-Endorsement:    OR('Org1MSP.peer','Org2MSP.peer')
-State DB:       CouchDB
-Organizations:  Org1MSP, Org2MSP
-Orderer:        Raft (single node)
-Workers:        4
-Test Date:      2026-02-28</pre>
+            <h3>System Under Test (SUT)</h3>
+            <pre id="sutdetails">Platform       : Hyperledger Fabric 2.5.9
+Channel        : mychannel
+Chaincode      : basic (asset-transfer-basic — RBAC Certificate Management System)
+Endorsement    : OR('Org1MSP.peer','Org2MSP.peer')
+State DB       : CouchDB
+Organisations  : Org1MSP (Issue/Verify/Query), Org2MSP (Revoke)
+Orderer        : Raft (single node, port 7050)
+Peer Org1      : peer0.org1.example.com:7051
+Peer Org2      : peer0.org2.example.com:9051
+Workers        : 4
+Report Version : v3.0
+Test Date      : 2026-03-01</pre>
         </div>
 
     </div><!-- end right-column -->

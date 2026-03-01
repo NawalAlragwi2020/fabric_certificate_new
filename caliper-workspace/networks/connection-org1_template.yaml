@@ -1,11 +1,45 @@
+# =============================================================================
+# connection-org1_template.yaml — Org1 Connection Profile Template v3.0
+# =============================================================================
+# This file is a TEMPLATE. The actual connection-org1.yaml is generated
+# dynamically by fix_and_run_caliper.sh with real certificate paths.
+#
+# KEY FIX: All peer/orderer references are listed explicitly (no discovery).
+# =============================================================================
+
 name: test-network-org1
 version: 1.0.0
+
 client:
   organization: Org1
   connection:
     timeout:
       peer:
         endorser: '300'
+      orderer: '300'
+
+# ---------------------------------------------------------------------------
+# Channels — list every peer that participates in mychannel
+# ---------------------------------------------------------------------------
+channels:
+  mychannel:
+    orderers:
+      - orderer.example.com
+    peers:
+      peer0.org1.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer0.org2.example.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+# ---------------------------------------------------------------------------
+# Organisations
+# ---------------------------------------------------------------------------
 organizations:
   Org1:
     mspid: Org1MSP
@@ -13,18 +47,53 @@ organizations:
       - peer0.org1.example.com
     certificateAuthorities:
       - ca.org1.example.com
+
+  Org2:
+    mspid: Org2MSP
+    peers:
+      - peer0.org2.example.com
+
+# ---------------------------------------------------------------------------
+# Orderers
+# ---------------------------------------------------------------------------
+orderers:
+  orderer.example.com:
+    url: grpcs://localhost:7050
+    grpcOptions:
+      ssl-target-name-override: orderer.example.com
+      hostnameOverride: orderer.example.com
+    tlsCACerts:
+      # Path resolved at runtime by fix_and_run_caliper.sh
+      path: 'REPLACE_ORDERER_TLS_CA'
+
+# ---------------------------------------------------------------------------
+# Peers
+# ---------------------------------------------------------------------------
 peers:
   peer0.org1.example.com:
     url: grpcs://localhost:7051
-    tlsCACerts:
-      path: '/workspaces/fabric_certificate_MT/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt'
     grpcOptions:
       ssl-target-name-override: peer0.org1.example.com
+      hostnameOverride: peer0.org1.example.com
+    tlsCACerts:
+      path: 'REPLACE_ORG1_PEER_TLS_CA'
+
+  peer0.org2.example.com:
+    url: grpcs://localhost:9051
+    grpcOptions:
+      ssl-target-name-override: peer0.org2.example.com
+      hostnameOverride: peer0.org2.example.com
+    tlsCACerts:
+      path: 'REPLACE_ORG2_PEER_TLS_CA'
+
+# ---------------------------------------------------------------------------
+# Certificate Authorities
+# ---------------------------------------------------------------------------
 certificateAuthorities:
   ca.org1.example.com:
     url: https://localhost:7054
     caName: ca-org1
     tlsCACerts:
-      path: '/workspaces/fabric_certificate_MT/test-network/organizations/peerOrganizations/org1.example.com/ca/ca.org1.example.com-cert.pem'
+      path: 'REPLACE_ORG1_CA_CERT'
     httpOptions:
       verify: false
