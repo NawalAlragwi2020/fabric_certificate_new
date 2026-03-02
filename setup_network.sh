@@ -1,26 +1,43 @@
 #!/bin/bash
+set -e
 
-echo "🚀 جاري بدء عملية الإصلاح والتجهيز..."
+echo "Starting Fabric Network Setup..."
 
-# 1. تحميل أدوات Hyperledger Fabric
+# Auto-detect root directory from script location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# 1. Download Fabric tools if not present
 if [ ! -d "bin" ]; then
-    echo "⬇ جاري تحميل الأدوات (Binaries)..."
+    echo "Downloading Fabric tools (Binaries)..."
     curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.5.9 1.5.7
 else
-    echo "✅ الأدوات موجودة مسبقاً."
+    echo "Fabric tools already present."
 fi
 
-# 2. إصلاح الصلاحيات (في المجلد الحالي وكل ما تحته)
-echo "🔓 منح صلاحيات التنفيذ..."
-chmod -R +x .
+export PATH=${PWD}/bin:$PATH
+export FABRIC_CFG_PATH=${PWD}/config/
 
-# 3. الدخول لمجلد الشبكة وتشغيلها
-cd test-network || { echo "❌ مجلد test-network غير موجود!"; exit 1; }
+# 2. Fix permissions
+echo "Fixing execute permissions..."
+chmod -R +x . 2>/dev/null || true
 
-echo "🧹 تنظيف الشبكة القديمة..."
+# 3. Start the network
+cd test-network || { echo "ERROR: test-network directory not found!"; exit 1; }
+
+echo "Cleaning up old network..."
 ./network.sh down
 
-echo "🌐 تشغيل الشبكة وإنشاء القناة..."
-./network.sh up createChannel
+echo "Starting network and creating channel..."
+./network.sh up createChannel -c mychannel -ca -s couchdb
 
-echo "🎉 تم الانتهاء بنجاح!"
+echo "Waiting 20 seconds for network to stabilize..."
+sleep 20
+
+echo "Network setup complete!"
+echo ""
+echo "Next steps:"
+echo "  1. Deploy chaincode:"
+echo "     cd test-network && ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go -ccep \"OR('Org1MSP.peer','Org2MSP.peer')\""
+echo "  2. Run Caliper benchmark:"
+echo "     cd ../caliper-workspace && ./fix_and_run_caliper.sh"

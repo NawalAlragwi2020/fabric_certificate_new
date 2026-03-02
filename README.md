@@ -80,7 +80,7 @@ Additional samples demonstrate various Fabric use cases and application patterns
 | [Dutch Auction](auction-dutch) | Run an auction in which multiple items of the same type can be sold to more than one buyer. This example also includes the ability to add an auditor organization. | [README](auction-dutch/README.md) |
 
 
-## License <a name="license"></a>
+## License <a name="Moain"></a>
 
 Hyperledger Project source code files are made available under the Apache
 License, Version 2.0 (Apache-2.0), located in the [LICENSE](LICENSE) file.

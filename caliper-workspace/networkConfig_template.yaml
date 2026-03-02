@@ -10,11 +10,30 @@ organizations:
   - mspid: Org1MSP
     identities:
       certificates:
-        - name: 'User1'
+        - name: 'User1@org1.example.com'
           clientPrivateKey:
-            path: '/workspaces/fabric_certificate_MT/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/REPLACE_WITH_ACTUAL_KEY_FILE'
+            # IMPORTANT: This path is dynamically resolved at runtime by the setup script.
+            # The private key filename contains a random hash and changes every time
+            # the network is recreated. Use `find ... -name "*_sk"` to locate it.
+            path: '{{ORG1_PRIVATE_KEY}}'
           clientSignedCert:
-            path: '/workspaces/fabric_certificate_MT/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/User1@org1.example.com-cert.pem'
+            # Certificate path — may be cert.pem or User1@org1.example.com-cert.pem
+            # depending on whether -ca flag was used with network.sh
+            path: '{{ORG1_SIGNED_CERT}}'
     connectionProfile:
       path: 'networks/connection-org1.yaml'
+      # CRITICAL: Must be false when using manual connection profiles
+      # Setting to true causes DiscoveryService errors in containerized environments
+      discover: false
+
+  - mspid: Org2MSP
+    identities:
+      certificates:
+        - name: 'User1@org2.example.com'
+          clientPrivateKey:
+            path: '{{ORG2_PRIVATE_KEY}}'
+          clientSignedCert:
+            path: '{{ORG2_SIGNED_CERT}}'
+    connectionProfile:
+      path: 'networks/connection-org2.yaml'
       discover: false

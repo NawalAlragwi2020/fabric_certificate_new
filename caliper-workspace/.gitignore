@@ -10,6 +10,7 @@ caliper.log
 # Generated network configs (created dynamically by script)
 networks/networkConfig.yaml
 networks/connection-org1.yaml
+networks/connection-org2.yaml
 
 # Temporary files
 *.tmp
